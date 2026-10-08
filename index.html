@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Olyra · Assistência Técnica</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<style>
+  :root {
+    /* Cores Olyra: verde escuro + dourado */
+    --bg: #f4f2ec; --card: #fff; --txt: #1f2a21; --sub: #6b7368; --line: #e4e1d8;
+    --pri: #2f5a34; --ok: #2e7d3a; --warn: #b45309; --err: #b42318; --soft: #edf3eb;
+    --verde: #24452a; --ouro: #c9a46a; --ouro-claro: #f6efe3;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 16px/1.4 "Montserrat", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--txt); }
+  header { position: sticky; top: 0; z-index: 5; background: var(--verde); color: #fff; padding: 10px 16px; display: flex; gap: 12px; align-items: center; justify-content: space-between; border-bottom: 3px solid var(--ouro); box-shadow: 0 2px 8px rgba(0,0,0,.15); }
+  .logo { display: inline-block; flex: none; width: 30px; height: 32px; background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGcAAABwCAYAAAADkm7aAAATiUlEQVR42u2de7hcZXXGf3vPkJMECASMuRouRRCSEiESQMo1iBfkIhcN0IKiYmkVi61IC6ktaqVVqQULfaQUC4iADRBDkVsNQUoVCJeI0ECUBgLBFJKQBBJPzsz0j/V+OYudOefMzP72nDlp5nnmmTlz5uyz9/d+31rvetda304W3/cdtqBHClT1vgRUhvrFbGnAfArYX8CUtoIz+I+ygPk4cDXw78AHHUDJVnAGD5ge4ATgnwTIOOB24PP6uTYUr3Wog7ONgDkKuA7ocuatDHxbgO2gz0pbwWnfitkIHATcBIwSAImuK9Gq+QwwD3iHfi5vBafYR0krZhpwGzBGA++vJ3HfOxR4EDhSPw8JPzQUwUkFxO7AXPmX/phZWb+fDNwh0lAZCtefDlG6/DbgVmCXBilzSX83ErgWuMoxvNJWcPI/ErGubeVjpjkT1ei11gTmHwL/5sxheSs4+YAJK+BGYKaAKbdwnKAcHA88JH/U04krKB0iwIRVc40GdWPO2R6Iwh7yW2c4QpFuBadxYIKf+QfgTA3qNpGoeAUYDdwA/LU+7xg/1OngBGb2ZeC8Fk3ZQCuoJkD+Ur7s7Z3ih9IOj2UqwB8Df1WgkBlWZw9wKvAfwJRO8ENpB0f/FeD3gcs1s9OCA8eg0U0VQCcNth9KO1jIPFExSeKe7ZoUY4E5wJc0MaqDMVZphwJzGCZkluUTkjab0wDIpSIL29Mrpv6/BKfkzMqNbkDSQbIogYycAdwL7FkAIRkS4ISB2FXmZOIgAlNvwhwIzAfe307hNO0gveztmMK8Zx2FuRPIyQQsgfe5diXw0g4BZgfgh8C7OzT3H/xQl9jjVcCIogPWtAP0srKc/2GSZUodLhIH4XQe8DtFTqZ0kPWyKnAFppfFkmWKPu/gh2YCPwEOcYpCMtTB8XrZVzULe4ZS+thR/snAXcAn9XNUP5QOIjP7InDREAQmW461LfDPWDHJNjH9UDpIzOcTwN92ah6lhfGrYmVYc51wWhpK4ARTcCxwpUzAkC34q+M/e7BCxvnAjBjKdtpmYGYA3wOGZxgbWwBA4Rr3kaJwet6ANW2zLHMrVpxR3cLqtLNmexRwvQtYOxKc4PzfgRVUTOyw6L/IgDVRwHqhIwlJp4AT8v6jFGTutQUQgFaIwtfFSpv2QWnBTrIsH3NEmylzrc5zsIhCRfHcZ5tVQNKCg8zLgY+0AZiqBqHHmZTsM/y+4hqs2hlwXwGc1oxZLxdIAC5W9F9UsUTV0fHsxa4C3nAR+ygsP5R99LQhDe39zNXAYuCxRjrvYg9aoJNnYqVGRTh/Dwr6H88CC4AngZV6fVXfK2P11FMx9XsGcDDwTnf9FTfLiwIoqAnXYrrcSueX6/9RxJ7QMBOOwhTb4cTN/dcy0sh/Yx1sPwKeANY0cazRWDnvScAHBFQ7QArKwXXAWQOtnljgBLs6CfgpltGMKaX7Yz2ONUTNAV5z39kVS9RNA3bWLE1k3tYAzwHPAE9lZuvbBNI5wHRn7soFAzQLuLk/gGKAE1ZHl2bykQUBswb4GvBdYLV+twvwYaxSZ2/FUf09XteKux8rIFzkyMH2WCnWnysuqxZU9ROOuxw4QK/UM295wEmc7a8AlwCzIwMTZvDPNLN/oc/3Bs4FTgHG1/FH9Uxikjmv30pm+S7WtxP+bpKu5RPumGlBq+dyTDCtu3paBScLzCFYIV45YvFfuIBrdQFrNbs/D/yJTBfuohrxFTW3Uvx5zlUs8qj77mnAP8o/xc52hthrPdbl8HhmD4WW45zQ5zJNYAwDLpNZSyID8zfA2QJmumb4VwRMj5sgpQavJXHfT1yhxgnAA1i99Ah99wfAMaK+ITwootfoC32NW9qibnQBsJ9MwyedRJ5GMmUBmIv02bFamYc5UGKkhT1II0T/5wG76fePin0+6MKE2BrcxzTxNludaQtU+QuYHH67mM75EasyQ8D6LwpiAT6KiaY7FJWrd90GGxWD3I91aQO8rJX1oFOdY5q3beQ/NyMFaZPAnAV8S2ZstezyOyM5zRDD/Bz4U53oB4F/VcxUdN9MooEKzb0/Bo5zisNJ8g0x99QJk+xErAH5LeOYNhlcXg0swfIyw8WgYiTNwox5E+vDWQ3smwEmbbPkv6Po9gk6v//FSnOXu+/ESqnsJPNGM+CEP54CfF8z6w5gnZzllIirJsW61x4GtpNQOAbodo222We1IMU5dd3XN2KqOgpizwA29BWb5Fg9J4hc9TQCTmAQ22O9mOP0+Ry9njyQNtQkMC9gFSxo9Rym98Mcw8o+U6dbVSID5QG6RRMxwWoELnETN1bu5z0iWZs+Kzewai7FCrlrkkAewypMjopo0lKsxHWFBuFsrB7sDdHo52TqEk2SPQTaOGz7ruEZUhFLHwsAjZEpP1Tm7TJd/9GRYqBwjKPlc5P+wAnAfBiT/bs1GPfJLxyjSDrviYU45TXpTImc79HA/zTw98PkvA8Sy5op6SUmSGEs9pSmN0shxOeA/1SQGoutHoFlTqtAkvZjA3cG/j6T71io10MimZDgVOcBz+v/vCxgkowJK+vpTVq3CMoNklveK5Ky0H2nEjFH9RGFEkij+5YzqzFM21SRg1pf4ISl/GcyH0Hf2iBFFywfElMUvMcdK8kUjVdcFrMnQwbCdwNgy8QoDxZYizOdajFSIrMVdCNt7KkI7C347nHu2JuBE05gH+CP3AAgh71IQuPuEfxNMGm/kbDp8/2NsrCaIwOVTKH597SSvpnpVMvLqkbKD3eJtV7sVIsYScTD+wIn2M4LsdSut6VrtXrGSBMiUmyzyqUAahGOWXHyzkqsJvsk4KUIGlmYvEeKUoMl++6PFJwmGvfNqLQXNE91LCoM2Dp6JfXtIjjBcNzXRDJiSzI9rgLoNrGrxyNIMOE8L3Bk4CvyfzEY4j4iOpV6K+dcUdNspeIive4bydEGcH4p9pMWEFDWnM98FviQTGieWR6ufS9pjEh3u8uJqHlIwSTpiLU0U4Cwh4JLX0ARBmypXneIPICr2lA3HZTuV8S4FuV04sGBnyMfVMPyTjHKzUbouelAqRPgds4QgfBYX1CtW7sK/ioOoFNF2dMWAQqrfF9MNa8Bd8ts5qXW2+v5FvljmBxnX76kWhA4XbTvUXEm7rycgxgm1bkazPVSEfJMuJpW4o4enJoc0QH9RNVJBqRYgt8eEYPFZkzcHMUprf7vYBani7In9IrCpRwApUG58dH/yQMwmeEFgbObZl47t1EJYuvXpDC0at6Cbz5H7592gXot79ikLol14ACDONHlXGKCM4revD1tLHRPsKrQb+ZQ18M1HCSNrxsrDyOGyQzgjMXU4Ho+JXEUGqzUtRZBiQ2+biKmLCdt7tsJNQ835GBvYfwmKDBNsOrTPFaggqXLNw3GfpJlqv0cdCcn46yLlMsJIB8ziG0ab0iPyyveTtc1PKqwoxWwE1mm1R6csQ1QwJHySa86Wh3LtJ2kc2h3O2KY4T/CqkFbCYSDBXmfxugVLGPaqt9Zq+emgRjdTyAYPpuMSdovu1xLLWJb4kcHYW+1MBmWKcInB2vc3eWSnslBzTfouQmcyQ22L/yu3j9CvI6xYB7PVwDcboDC9d3TYhyXuDuSvEvvX8kBzgtSTTap0hMatKv76/WnEQcwONXdMPm93VsHh2t7SjO2FdMWdMiQSnnEEY5mj/V0iMVSJxk0IsodoYj+ISzfX4q0eoLzPBerVWt3/2gAZ0nOY03S64sCOmnR5zS1hMP33i2/8yLWSUbk/souLE+/exs7r72tfzWnL91brxtbIE1hjH8SziF1fSuNLN2gJCCGQ2TzFqotb6L3JhClNm7Kt6JFcMIYbKfXbiwN0ixrXO46HTaBs6KJEzheEf1crCgjibh6QqbyAExEHNum3dF9Kj7Pyklc4cn6Jo5VdQF+KAGrBnCWNzG79sGSVmuxraySyAFk0Pd+D6tXfpfzQWnB4KyJ1Nre3aLMNd/HeuFiG7W1Yfl9BksxXJczLzJQrn4/LD9/ittjoIgug5qjwzGOU20yXgoWY35WW8PV/jbKqo7GcvLLsO6vpAD5peR2R78Fqwgdn2maSiODMz4CKFWB3NUklf+5dLlNn6WO+m1sghonWF1bCds77ZmIlff1+mbAKk9/hrUcjna1a2mmW60Z81NyPjNxwXiaI+VexdIr2zZImML13Za9L1DqiiyWN3hxgVXNxPp1VgN/UWDFv98eZTJWhboQ6+Gcmqlbq9WpFK1X/F6rU/y+nYtTWl05v3AhQVcTdeK/kXV4i3yUuvrkXzURt4QLnK0Luh3rRivyZt0lV5e2G9aS+JA0sQuxYrwJ/bSL+ErR0ZKiPusklxl6X8sh4bzkzrWribb322W93mK5Qu3xRkXHRzapR+2qGfxxDdD+FHvT7iRzQ6LtsS3s36/PXsTk+nVYPVx4P0znOlZhwFj9/LxiKjBVOW3h3GvOpC9xK2dkg+Tqt/KnmxGysvtgAfDpJux2uJAzsWba67Hm3flYgUK1YOpbqtO6PnkAETf7+KKY6hh6KzhbZYLdAhutyq4BRNyqu0Hgk321utccx17TpFgXvvttLM39hADqjhycNtq6Xh3ApFVc5H6DSxOcLvOcZ0ItdcH81AFcRABtDb2dCn0ObiKn9GBmNjZqa3eit/vtVqzgoVKA9tbIZOmPDIRtYJ6XGQZrBDs/B5mpOk1sbRMqf2gY+2VfEzl1DrCiiDxpURObIvu9I9Zo+6nM7wf7UXWlUWfLeQdSs0sEM/yU8zfT+jGR4f88C/xdfzFimnFE94q5pS0GjIeLEgaA/kBUO/YOGK22V6RYG/39+vw4rNWlVQITyMDrWJdbMGl79+NvfCfHyv7cSJpBc7FbPZUWAXoftqnDODm7YxWkltu8hWN2ppawHaEu1+d7yqzkqfoJ2eDFbuVMU8xUb8vikAa5RkFnv6FHWifYuzbHEi+5APUOsZaHsCTdzS4I7GlTtU3YJnIDVn57Kb0FLTfRe4erJGeByG1ukD/Qx6oJ6vqj8nED6pFpnXzNA8B/5WBbAaDpotiniMXMElF4wYmXlYJAqjiRdKnM1xVOP5srUTVPPBbM5OuuRnqSTHt2NQbavFK+eG0jemRa5+du4Bs58xol1yJ+sySX7bD6sEOlx63PbAxUjdTVVnUr9BYF1vfRWxh5j2h/3kxrWHH3Ar+mdwOlMZnV6InIWYppGlJS0j7s852ula6aM7uIxMoFWB7oBeyuuQdjG9GtzGhelQYbbPvqB00VEhyPbVnyvNvg6B457BgJPH8z82A+Z2VWRM2tsPNl6hvurOurJ3QjtktFXjHTN8ruj7W0Xy+T8iSWF5qO3Xv66cwAZwXKauaZ7aR+DatTPlFyzjwXc1ypFTw2krQUJvF8rZxE5uwwx+Bq7v0FwHeaZa197VQYlt210s1iXVAgHesk9l0p/4a0qAOx6psZ2G5U4/tx1hsUKyzWIC0QwLhCyY+Jsu7iJlkSkQEep9UAdkPAUzIsLRUw32hFFO4LnLA0J2JJoAkRL6ySaWm8U7N8jsvIhsh9PyxxNVzBXVW+qkfx2CPykf4xHutc+7STUWIKsQGYuwROD73baA5zPq+C7fJxlbMCtRjg+NVzunSomIUWtTrFgyuwYsW7sKr/X2W2JqafmoN9sDsPHqeVN66gfaJrTp87SpOjpHOeqc+7dC1ny8yWW2Wl5QZm+I1YscW5EYv9ksyO6olWysl6vqkLXITVZS8T/dzodvcbj9Um7+V2W89WYJYKCGjLkl0e1mezFMdtFDAPa9UuyquMDLQ7bvARI2XX31NgrsYLrqWcEk1SYMPv43L8b4pgPETvJudXYJu4ro2xJ2jaYPp1HbZl5LKCagWy8n+tQfm/kgGlqHvABRa7WuZqnf7vZQLmMZnU8wVMGkNLTJvYe3MJtmP56gJKoforwCg1UBOQFFyuG0jAl+itkJmNbXl2sQLrH2fySsQo4GtmSS/AMoY/lKmrbuG3+PLEZbaC5lTi7m5ik0syBIrBuIlrYGt3ygmu76BcTVHAhEn5VT2DyV0k87YkoxMymLc/DvePnodtU7Kq4IobBjkxV8bKvmY7U16jt4ysUIW9FZMUCt/uxhptn3MVPLUtAJigk70peenrGTnGB+nVdtyVr9VdMMJ28ndrRSWDkEyLbcbKCoA/JB9TqhNE1tp5y8Q8vH+ZaOSXXatdZYitoh5H5X+goPuBArbHb+tNXCvO7l6SkTSSDgcpu6vhUjn507GG28Gue4hCg31U/4Ci54tcz2ingVTLyDuh4vIQTIVPO4WFpgXQzg3Y7VXeKzljdeSMZ554xYOyAasjOByrwHkp4k66HQVOVnAMTvU8B9KyTE9NpeAVVctkSVO3G+81AuU0TKgsFRWr5JJJIt6Ksh7w/oIniTiciZUPjejjXmvZ/aqTBnY4rGU0sOzEW4+1Z3wfS479uk5pWMc9igSnL5BKAud4rDH3EPrfN7SemUka0NRWYFnWh7G8ylOZc6DTg+dyG6NtvyH3Y3qCpZDDLolTsL0OurDsZ9iLLe3juK9juz516/1CrIBxIZa+Xt5HM/CQUDTKtNcp92QKP6qisEsxVRcs9x/S0jtiSbWd3LnWBMgKPd+QOrFO7+sVmITV18MQepQZPO0qe0vIIImsynz3iSavp5ZhaENVseD/AKWfB2MhBmtRAAAAAElFTkSuQmCC) center / contain no-repeat; }
+  .logo.grande { width: 74px; height: 80px; }
+  .hero { background: var(--verde); color: #fff; border-radius: 16px; padding: 26px 16px 22px; margin: -2px 0 14px; text-align: center; border-bottom: 3px solid var(--ouro); }
+  .hero .marca { font-size: 30px; letter-spacing: .32em; font-weight: 500; margin: 10px 0 0 .32em; color: var(--ouro); }
+  .hero .sub { font-size: 11px; letter-spacing: .3em; text-transform: uppercase; color: #d8e3d6; }
+  .hero .area { margin-top: 14px; font-size: 15px; font-weight: 600; }
+  header select { font-size: 16px; padding: 6px 8px; border-radius: 8px; border: 0; }
+  .stats { display: flex; gap: 14px; font-size: 13px; }
+  .stats b { display: block; font-size: 18px; }
+  main { max-width: 640px; margin: 0 auto; padding: 16px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px; margin-bottom: 14px; box-shadow: 0 1px 3px rgba(36,69,42,.06); }
+  h2 { font-size: 14px; text-transform: uppercase; letter-spacing: .06em; color: var(--pri); margin: 0 0 12px; padding-left: 9px; border-left: 4px solid var(--ouro); }
+  #listaNomes button { background: var(--soft); color: var(--verde); border: 1px solid #d6e3d3; }
+  #listaNomes button:active { background: var(--pri); color: #fff; }
+  .scan { display: flex; gap: 8px; }
+  .scan input { flex: 1; font-size: 22px; padding: 14px; border: 2px solid var(--pri); border-radius: 12px; text-transform: uppercase; min-width: 0; }
+  button { font: inherit; border: 0; border-radius: 12px; padding: 14px 16px; cursor: pointer; background: var(--soft); color: var(--pri); font-weight: 600; }
+  button.pri { background: var(--pri); color: #fff; }
+  button.ok { background: var(--ok); color: #fff; }
+  button.big { width: 100%; font-size: 20px; padding: 18px; }
+  button:disabled { opacity: .45; cursor: default; }
+  .row { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+  .row:last-child { border-bottom: 0; }
+  .muted { color: var(--sub); font-size: 14px; }
+  .code { font-size: 26px; font-weight: 800; letter-spacing: .02em; }
+  .timer { font-size: 52px; font-weight: 800; text-align: center; font-variant-numeric: tabular-nums; margin: 6px 0; }
+  .tag { display: inline-block; font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 99px; background: var(--soft); color: var(--pri); }
+  .tag.ok { background: #e7f6ec; color: var(--ok); }
+  .tag.warn { background: #fff4e5; color: var(--warn); }
+  textarea.full { font: inherit; resize: vertical; }
+  select.full, input.full, textarea.full { width: 100%; font-size: 18px; padding: 12px; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+  .peca { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+  .peca .nome { flex: 1; font-size: 15px; }
+  .peca.sel .nome { font-weight: 700; }
+  .chk { padding: 8px 0; border-bottom: 1px solid var(--line); }
+  .chk .txt { margin-bottom: 6px; }
+  .chk .opts { display: flex; gap: 6px; }
+  .chk .opts button { flex: 1; padding: 8px 4px; font-size: 13px; }
+  .chk .opts button.on.v-ok { background: var(--ok); color: #fff; }
+  .chk .opts button.on.v-prob { background: var(--err); color: #fff; }
+  .chk .opts button.on.v-na { background: #667085; color: #fff; }
+  .chk input { margin-top: 6px; }
+  .chk-info { background: var(--soft); border-radius: 10px; padding: 10px 12px; margin-bottom: 10px; font-size: 14px; }
+  .chk-info ol { margin: 6px 0; padding-left: 20px; }
+  .chk-info .na { text-decoration: line-through; color: #98a2b3; }
+  .step { display: flex; align-items: center; gap: 6px; }
+  .step button { width: 44px; height: 44px; padding: 0; font-size: 22px; }
+  .step span { width: 28px; text-align: center; font-weight: 700; font-size: 18px; }
+  .resumo { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; text-align: center; }
+  .resumo div { background: var(--soft); border-radius: 10px; padding: 8px 4px; }
+  .resumo b { display: block; font-size: 20px; }
+  .resumo small { color: var(--sub); font-size: 12px; }
+  .barra { position: relative; height: 14px; background: var(--line); border-radius: 99px; overflow: hidden; margin-top: 4px; }
+  .barra div { height: 100%; width: 0; background: var(--pri); border-radius: 99px; transition: width .4s; }
+  .barra div.meta { background: var(--ok); }
+  .barra div.super { background: #c99a06; }
+  .barra i { position: absolute; top: 0; bottom: 0; width: 3px; background: var(--txt); opacity: .6; }
+  .tag.gold { background: #fdf3d0; color: #8a6a00; }
+  .pausado { text-align: center; font-weight: 700; color: var(--warn); background: #fff4e5; border-radius: 10px; padding: 8px; margin-bottom: 10px; }
+  .timer.parado { color: var(--sub); }
+  .hidden { display: none !important; }
+  #toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: var(--txt); color: #fff; padding: 12px 18px; border-radius: 10px; max-width: 90vw; z-index: 20; }
+  #toast.err { background: var(--err); }
+  .modal { position: fixed; inset: 0; background: rgba(0,0,0,.55); display: flex; align-items: center; justify-content: center; z-index: 10; padding: 16px; }
+  .modal .card { width: 100%; max-width: 480px; margin: 0; }
+  #leitor { width: 100%; }
+  .actions { display: flex; gap: 10px; margin-top: 12px; }
+  .actions > * { flex: 1; }
+</style>
+</head>
+<body>
+<header>
+  <div style="display:flex;align-items:center;gap:8px;min-width:0">
+    <span class="logo"></span>
+    <b id="nomeUser" style="font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></b>
+    <button id="btnSair" style="padding:5px 10px;font-size:13px;background:rgba(255,255,255,.15);color:#fff">Sair</button>
+  </div>
+  <div class="stats">
+    <div><b id="stPontos">0</b><span id="lbl1">pontos hoje</span></div>
+    <div><b id="stQtd">0</b><span id="lbl2">máquinas</span></div>
+    <div><b id="stPend">0</b>a enviar</div>
+  </div>
+</header>
+
+<main>
+  <!-- ENTRADA (login por nome) -->
+  <section id="telaLogin" class="hidden">
+    <div class="hero">
+      <span class="logo grande"></span>
+      <div class="marca">OLYRA</div>
+      <div class="sub">Marketing olfativo</div>
+      <div class="area">Assistência Técnica</div>
+    </div>
+    <div class="card" style="text-align:center">
+      <p class="muted" style="margin:0 0 16px">Toque no seu nome para entrar</p>
+      <div id="listaNomes" style="display:grid;gap:10px"></div>
+      <div id="boxPin" class="hidden" style="margin-top:16px">
+        <p style="margin:0 0 8px">Senha de <b id="pinNome"></b></p>
+        <input id="pinInput" type="password" inputmode="numeric" maxlength="6" class="full" style="text-align:center;font-size:26px;letter-spacing:8px">
+        <div class="actions"><button id="pinVoltar">Voltar</button><button class="pri" id="pinOk">Entrar</button></div>
+      </div>
+      <p class="muted" id="msgLogin" style="margin:14px 0 0"></p>
+    </div>
+  </section>
+
+  <!-- TELA INICIAL -->
+  <section id="telaInicio">
+    <div class="card hidden" id="cardLiberacao">
+      <h2>Liberação de máquinas</h2>
+      <button id="btnLbVerificar" style="margin-bottom:10px">📋 O que verificar</button>
+      <div id="lbVerificar" class="hidden chk-info"></div>
+      <div id="lbAtiva" class="hidden">
+        <div class="muted">Liberando</div>
+        <div class="code" id="lbModelo"></div>
+        <div class="timer" id="lbTimer">00:00</div>
+        <div class="pausado hidden" id="lbPausado">⏸ PAUSADO — o tempo parado não conta</div>
+        <button class="big" id="btnLbPausa" style="margin-bottom:10px">⏸ Pausar</button>
+        <button class="big ok" id="btnLbFim">■ Finalizar liberação</button>
+        <div class="actions"><button id="btnLbCancelar" style="color:var(--err)">Cancelar</button></div>
+      </div>
+      <div id="lbNova">
+        <select id="lbSelModelo" class="full" style="margin-bottom:10px"></select>
+        <button class="big pri" id="btnLbIniciar">▶ Iniciar liberação</button>
+      </div>
+      <div id="listaLiberacoes" style="margin-top:8px"></div>
+    </div>
+
+    <div class="card hidden" id="cardErros">
+      <h2>Erros de qualidade</h2>
+      <form class="scan" id="formErro">
+        <input id="erCodigo" autocomplete="off" placeholder="Código da máquina" style="flex:1;font-size:20px;padding:12px;border:2px solid var(--pri);border-radius:12px;text-transform:uppercase;min-width:0">
+        <button type="button" id="btnErCam" title="Ler com a câmera">📷</button>
+      </form>
+      <p class="muted" style="margin:8px 0 0">Bipe ou digite o código: o app já traz o modelo e quem fez a manutenção.</p>
+      <div id="listaErros" style="margin-top:6px"></div>
+    </div>
+
+    <div class="card hidden" id="cardPecas">
+      <h2>Peças usadas</h2>
+      <p class="muted" style="margin:0 0 8px">Peças que você trocou na verificação. Vão para a baixa no Bling.</p>
+      <select id="pcModelo" class="full" style="margin-bottom:8px"></select>
+      <select id="pcPeca" class="full" style="margin-bottom:8px"></select>
+      <div class="scan">
+        <input id="pcCodigo" class="full" placeholder="Código da máquina (opcional)" style="text-transform:uppercase">
+        <input id="pcQtd" type="number" min="1" value="1" inputmode="numeric" style="width:70px;font-size:18px;padding:12px;border:1px solid var(--line);border-radius:10px">
+        <button type="button" class="pri" id="btnPeca">+</button>
+      </div>
+      <div id="listaPecasUsadas" style="margin-top:6px"></div>
+    </div>
+
+    <div class="card" id="cardScan">
+      <h2>Bipe o código da máquina</h2>
+      <form class="scan" id="formScan">
+        <input id="inScan" autocomplete="off" placeholder="M0001" inputmode="text">
+        <button type="button" id="btnCam" title="Ler com a câmera">📷</button>
+      </form>
+      <p class="muted" style="margin:8px 0 0">Bipe uma vez para iniciar, bipe de novo para finalizar.</p>
+    </div>
+
+    <div class="card hidden" id="cardMeta">
+      <h2 id="mtTitulo">Meta do mês</h2>
+      <div class="row" style="padding-top:0;border:0">
+        <div><b id="mtPontos" style="font-size:30px">0</b> <span id="mtUnid">pts</span> · <span id="mtMaq"></span></div>
+        <span class="tag" id="mtTag"></span>
+      </div>
+      <div class="barra"><div id="mtFill"></div><i id="mtMarca"></i></div>
+      <div class="row muted" style="border:0;font-size:13px;padding-bottom:0">
+        <span id="mtMeta"></span><span id="mtSuper"></span>
+      </div>
+      <p class="muted" id="mtFalta" style="margin:6px 0 0"></p>
+      <p class="muted" id="mtErros" style="margin:6px 0 0"></p>
+    </div>
+
+    <div class="card" id="cardAndamento">
+      <h2>Em andamento</h2>
+      <div id="listaAndamento"></div>
+    </div>
+
+    <div class="card" id="cardConcluidas">
+      <h2>Concluídas hoje</h2>
+      <div id="listaConcluidas"></div>
+    </div>
+
+    <div class="card">
+      <h2>Outras tarefas</h2>
+      <div id="tfAtiva" class="hidden">
+        <div class="row" style="padding-top:0">
+          <div><b id="tfNome"></b><div class="muted">em andamento</div></div>
+          <span class="tag warn" id="tfTimer"></span>
+        </div>
+        <button class="big pri" id="btnTfParar">■ Encerrar tarefa</button>
+      </div>
+      <div id="tfNova" class="scan">
+        <select id="tfTipo" class="full"></select>
+        <button type="button" class="pri" id="btnTfIniciar">▶</button>
+      </div>
+      <div id="listaTarefas" style="margin-top:6px"></div>
+    </div>
+
+    <div class="card">
+      <h2>Entrada de máquinas</h2>
+      <select id="enResp" class="full" style="margin-bottom:8px"></select>
+      <div class="scan">
+        <select id="enModelo" style="flex:1 1 auto;min-width:0;width:auto"></select>
+        <input id="enQtd" type="number" min="1" inputmode="numeric" placeholder="Qtd" style="flex:0 0 90px;width:90px;min-width:90px;font-size:20px;font-weight:700;text-align:center;padding:12px 6px;border:1px solid var(--line);border-radius:10px">
+        <button type="button" class="pri" id="btnEntrada">+</button>
+      </div>
+      <div id="listaEntradas" style="margin-top:6px"></div>
+      <details style="margin-top:10px">
+        <summary class="muted" id="enResumo" style="cursor:pointer">Estoque atual</summary>
+        <div id="tabEstoque"></div>
+      </details>
+    </div>
+
+    <div class="card">
+      <h2>Observação do dia</h2>
+      <textarea id="obsTexto" class="full" rows="3" placeholder="Avisos, pendências, máquina sem ficha..."></textarea>
+      <div class="actions"><button id="btnObs">Salvar observação</button></div>
+    </div>
+
+    <button class="big ok" id="btnEnviar">Enviar para a planilha</button>
+    <p class="muted" id="msgCatalogo" style="text-align:center"></p>
+  </section>
+
+  <!-- NOVA MÁQUINA -->
+  <section id="telaMaquina" class="hidden">
+    <div class="card">
+      <div class="muted">Máquina</div>
+      <div class="code" id="mqCodigo"></div>
+      <label class="muted" for="mqModelo" style="display:block;margin-top:12px">Modelo</label>
+      <select id="mqModelo" class="full"></select>
+      <p class="muted" id="mqInfo"></p>
+      <button class="big pri" id="btnIniciar">▶ Iniciar manutenção</button>
+      <div class="actions"><button id="btnCancelarMq">Cancelar</button></div>
+    </div>
+  </section>
+
+  <!-- MANUTENÇÃO EM ANDAMENTO -->
+  <section id="telaTrabalho" class="hidden">
+    <div class="card">
+      <div class="row" style="padding-top:0">
+        <div><div class="code" id="tbCodigo"></div><div class="muted" id="tbModelo"></div></div>
+        <button id="btnVoltar">← Voltar</button>
+      </div>
+      <div class="timer" id="tbTimer">00:00</div>
+      <div class="pausado hidden" id="tbPausado">⏸ PAUSADO — o tempo parado não conta</div>
+      <button class="big" id="btnPausa" style="margin-bottom:12px">⏸ Pausar (café / almoço)</button>
+      <div class="resumo">
+        <div><b id="rsQtd">0</b><small>peças</small></div>
+        <div><b id="rsNivel">–</b><small>nível</small></div>
+        <div><b id="rsPontos">0</b><small>pontos</small></div>
+        <div><b id="rsCusto">0</b><small>custo R$</small></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>✅ Check list</h2>
+      <div id="tbCheck"></div>
+    </div>
+
+    <div class="card">
+      <label class="muted" for="tbPressao">Pressão (opcional)</label>
+      <div id="tbPressaoRef" class="muted" style="margin:2px 0 6px"></div>
+      <input id="tbPressao" class="full" inputmode="decimal" placeholder="0,30">
+      <div id="tbPressaoAviso" style="margin-top:4px;font-weight:700"></div>
+    </div>
+
+    <div class="card">
+      <h2>Peças trocadas</h2>
+      <input id="tbBusca" class="full" placeholder="Buscar peça..." style="margin-bottom:6px">
+      <div id="listaPecas"></div>
+    </div>
+
+    <button class="big ok" id="btnFinalizar">■ Finalizar (ou bipe de novo)</button>
+    <div class="actions"><button id="btnDescartar" style="color:var(--err)">Descartar manutenção</button></div>
+  </section>
+</main>
+
+<!-- Confirmação de finalização -->
+<div class="modal hidden" id="modalFim">
+  <div class="card">
+    <h2>Finalizar manutenção</h2>
+    <div class="code" id="fmCodigo"></div>
+    <div id="fmResumo" class="muted" style="margin:8px 0"></div>
+    <div id="fmPecas"></div>
+    <div class="actions">
+      <button id="fmVoltar">Continuar editando</button>
+      <button class="ok" id="fmConfirmar">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirmação -->
+<div class="modal hidden" id="modalConfirma">
+  <div class="card">
+    <p id="cfTexto" style="margin:0 0 6px;font-size:17px"></p>
+    <div class="actions">
+      <button id="cfNao" onclick="document.getElementById('modalConfirma').classList.add('hidden')">Não</button>
+      <button class="pri" id="cfOk">Sim</button>
+    </div>
+  </div>
+</div>
+
+<!-- Registrar erro de qualidade -->
+<div class="modal hidden" id="modalErro">
+  <div class="card" style="max-height:92vh;overflow:auto">
+    <h2>Erro de qualidade</h2>
+    <div class="code" id="erCod"></div>
+    <div class="muted" id="erInfo" style="margin:2px 0 10px"></div>
+    <label class="muted" for="erModelo">Modelo</label>
+    <select id="erModelo" class="full" style="margin-bottom:8px"></select>
+    <label class="muted" for="erOperador">Quem fez a manutenção</label>
+    <select id="erOperador" class="full" style="margin-bottom:8px"></select>
+    <label class="muted" for="erCategoria">Categoria</label>
+    <select id="erCategoria" class="full" style="margin-bottom:8px"></select>
+    <label class="muted" for="erDefeito">Defeito encontrado</label>
+    <input id="erDefeito" class="full" list="erSugestoes" placeholder="Ex.: bomba sem pressão" style="margin-bottom:8px">
+    <datalist id="erSugestoes"></datalist>
+    <div class="actions" style="margin-top:0">
+      <div><label class="muted" for="erAplicavel">Erro aplicável?</label>
+        <select id="erAplicavel" class="full"><option>Sim</option><option>Não</option></select></div>
+      <div><label class="muted" for="erCorrigido">Corrigido?</label>
+        <select id="erCorrigido" class="full"><option>Sim</option><option>Não</option></select></div>
+    </div>
+    <details style="margin:8px 0"><summary class="muted" style="cursor:pointer">O que conta como erro aplicável</summary><ul id="erLista" class="muted" style="margin:6px 0;padding-left:18px"></ul></details>
+    <label class="muted" for="erObs">Observação (opcional)</label>
+    <input id="erObs" class="full">
+    <div class="actions">
+      <button id="erVoltar">Cancelar</button>
+      <button class="ok" id="erSalvar">Registrar erro</button>
+    </div>
+  </div>
+</div>
+
+<!-- Finalizar liberação: quantidade -->
+<div class="modal hidden" id="modalLib">
+  <div class="card">
+    <h2>Finalizar liberação</h2>
+    <div class="code" id="mlModelo"></div>
+    <div class="muted" id="mlTempo" style="margin:4px 0 12px"></div>
+    <label class="muted" for="mlQtd">Quantas máquinas deste modelo foram liberadas?</label>
+    <input id="mlQtd" class="full" type="number" min="1" inputmode="numeric" style="font-size:26px;text-align:center;margin-top:6px">
+    <div class="muted" id="mlMedia" style="margin-top:8px;text-align:center"></div>
+    <div class="actions">
+      <button id="mlVoltar">Voltar</button>
+      <button class="ok" id="mlConfirmar">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Câmera -->
+<div class="modal hidden" id="modalCam">
+  <div class="card">
+    <h2>Aponte para o código</h2>
+    <div id="leitor"></div>
+    <div class="actions"><button id="camFechar">Fechar</button></div>
+  </div>
+</div>
+
+<div id="toast" class="hidden"></div>
+
+<script>
+// Preencha apenas se hospedar este HTML fora do Apps Script (URL do App da Web /exec).
+const API_URL = 'https://script.google.com/macros/s/AKfycbySnPDWxm1-P_XD6Vz6DSXNANf8znAl9I_cF9qc6AVSZyk5qfdXnpNqcNAUiL90YGEe/exec';
+const CHAVE_APP = 'zl0fyk1nsiormg3w4tc9p25q';
+const LS_ESTADO = 'manut_estado_v1', LS_CAT = 'manut_catalogo_v1';
+
+let cat = { modelos: {}, maquinas: {}, operadores: [] };
+let st = { operador: '', andamento: [], concluidas: [], tarefas: [], obs: {}, entradas: [], respEntrada: '', liberacoes: [], erros: [], pecas: [] };
+let erroCodigo = null; // código do erro de qualidade sendo registrado
+let atual = null;       // manutenção aberta na tela de trabalho
+let novoCodigo = null;  // código bipado aguardando "Iniciar"
+let leitorCam = null;
+
+const $ = id => document.getElementById(id);
+const brl = v => v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const hojeStr = (d = new Date()) => new Date(d).toLocaleDateString('pt-BR');
+
+// ---------- persistência local ----------
+function salvar() { try { localStorage.setItem(LS_ESTADO, JSON.stringify(st)); } catch (e) {} render(); }
+function carregar() {
+  try { Object.assign(st, JSON.parse(localStorage.getItem(LS_ESTADO)) || {}); } catch (e) {}
+  try { cat = JSON.parse(localStorage.getItem(LS_CAT)) || cat; } catch (e) {}
+  st.tarefas = st.tarefas || []; st.obs = st.obs || {}; st.entradas = st.entradas || [];
+  st.entradas = st.entradas.filter(e => !e.enviado || hojeStr(e.data) === hojeStr());
+  st.liberacoes = (st.liberacoes || []).filter(l => !l.enviado || hojeStr(l.inicio) === hojeStr());
+  st.erros = (st.erros || []).filter(e => !e.enviado || hojeStr(e.data) === hojeStr());
+  st.pecas = (st.pecas || []).filter(p => !p.enviado || hojeStr(p.data) === hojeStr());
+  // Limpa o que já foi enviado em dias anteriores
+  st.concluidas = st.concluidas.filter(m => !m.enviado || hojeStr(m.fim) === hojeStr());
+  st.tarefas = st.tarefas.filter(t => !t.enviado || hojeStr(t.inicio) === hojeStr());
+  Object.keys(st.obs).forEach(k => { const o = st.obs[k]; if (o.enviado && hojeStr(o.data) !== hojeStr()) delete st.obs[k]; });
+}
+const diaLocal = (d = new Date()) => { d = new Date(d); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
+const novoId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+
+// ---------- comunicação com o Apps Script ----------
+function api(action, payload) {
+  const fn = { catalogo: 'getDados', enviar: 'enviarDia', entrar: 'entrar' }[action];
+  if (window.google && google.script && google.script.run) {
+    return new Promise((res, rej) => google.script.run.withSuccessHandler(res).withFailureHandler(rej)[fn](payload));
+  }
+  return fetch(API_URL, { method: 'POST', body: JSON.stringify({ action, payload, chave: CHAVE_APP }) })
+    .then(r => r.json()).then(j => j.ok ? j.data : Promise.reject(new Error(j.erro)));
+}
+
+function atualizarCatalogo() {
+  $('msgCatalogo').textContent = 'Atualizando catálogo...';
+  api('catalogo').then(d => {
+    cat = d;
+    try { localStorage.setItem(LS_CAT, JSON.stringify(d)); } catch (e) {}
+    $('msgCatalogo').textContent = Object.keys(d.modelos).length + ' modelos · ' + Object.keys(d.maquinas).length + ' máquinas conhecidas';
+    montarOperadores(); render();
+  }).catch(e => {
+    $('msgCatalogo').textContent = 'Sem conexão — usando catálogo salvo no aparelho.';
+  });
+}
+
+// ---------- regras ----------
+function pontuar(qtd) {
+  if (qtd <= 0) return { nivel: '–', pontos: 0 };
+  if (qtd <= 2) return { nivel: '1', pontos: 1 };
+  if (qtd <= 4) return { nivel: '2', pontos: 1.5 };
+  return { nivel: '3', pontos: 2 };
+}
+function pecasDe(m) {
+  return (cat.modelos[m.modelo] || []).map(p => ({ ...p, qtd: m.pecas[p.peca] || 0 })).filter(p => p.qtd > 0);
+}
+function resumoDe(m) {
+  const pecas = pecasDe(m);
+  const qtd = pecas.reduce((s, p) => s + p.qtd, 0);
+  const custo = pecas.reduce((s, p) => s + p.qtd * p.custo, 0);
+  return { pecas, qtd, custo, ...pontuar(qtd) };
+}
+// ---------- pausa (café / almoço): vale para manutenção e liberação ----------
+// Tempo trabalhado = (fim ou agora) − início − pausas já encerradas − pausa em curso
+function decorrido(o) {
+  const agora = o.fim || Date.now();
+  return agora - o.inicio - (o.pausaMs || 0) - (o.pausadoEm ? agora - o.pausadoEm : 0);
+}
+function alternarPausa(o) {
+  if (!o) return;
+  if (o.pausadoEm) { o.pausaMs = (o.pausaMs || 0) + (Date.now() - o.pausadoEm); delete o.pausadoEm; }
+  else o.pausadoEm = Date.now();
+  salvar();
+}
+function encerrarPausa(o) { if (o.pausadoEm) { o.pausaMs = (o.pausaMs || 0) + (Date.now() - o.pausadoEm); delete o.pausadoEm; } }
+function mostrarPausa(o, idAviso, idBotao, idTimer) {
+  const p = !!(o && o.pausadoEm);
+  $(idAviso).classList.toggle('hidden', !p);
+  $(idBotao).textContent = p ? '▶ Retomar' : (idBotao === 'btnPausa' ? '⏸ Pausar (café / almoço)' : '⏸ Pausar');
+  $(idBotao).className = 'big' + (p ? ' pri' : '');
+  $(idTimer).classList.toggle('parado', p);
+}
+
+function fmtTempo(ms) {
+  const s = Math.max(0, Math.floor(ms / 1000)), h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), ss = s % 60;
+  const p = n => String(n).padStart(2, '0');
+  return (h ? h + ':' : '') + p(m) + ':' + p(ss);
+}
+
+// ---------- fluxo de bipagem ----------
+function processarCodigo(raw) {
+  const codigo = String(raw || '').trim().toUpperCase();
+  if (!codigo) return;
+  if (!st.operador) return toast('Selecione o operador antes de começar.', true);
+  if (ehVerificador()) return abrirErro(codigo); // Patrícia: bipar = registrar erro de qualidade
+  const emAndamento = st.andamento.find(m => m.codigo === codigo);
+  if (emAndamento) { abrirTrabalho(emAndamento); pedirFinalizar(); return; }
+  novoCodigo = codigo;
+  $('mqCodigo').textContent = codigo;
+  const conhecido = cat.maquinas[codigo];
+  montarModelos($('mqModelo'), conhecido);
+  $('mqInfo').textContent = conhecido ? 'Modelo encontrado no histórico.' : 'Máquina nova: escolha o modelo.';
+  mostrar('telaMaquina');
+}
+
+function iniciar() {
+  const modelo = $('mqModelo').value;
+  if (!modelo) return toast('Escolha o modelo.', true);
+  const temLimpeza = (cat.modelos[modelo] || []).some(p => p.peca === 'Limpeza');
+  const m = { id: novoId(), operador: st.operador,
+    codigo: novoCodigo, modelo, inicio: Date.now(), pressao: '', pecas: temLimpeza ? { Limpeza: 1 } : {} };
+  st.andamento.push(m);
+  salvar();
+  abrirTrabalho(m);
+}
+
+function abrirTrabalho(m) {
+  atual = m;
+  $('tbCodigo').textContent = m.codigo;
+  $('tbModelo').textContent = m.modelo + ' · início ' + new Date(m.inicio).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+  $('tbPressao').value = m.pressao || '';
+  $('tbBusca').value = '';
+  renderPecas(); renderResumo(); renderCheck(); renderPressao(); tick();
+  mostrarPausa(m, 'tbPausado', 'btnPausa', 'tbTimer');
+  mostrar('telaTrabalho');
+}
+
+function renderPecas() {
+  const filtro = $('tbBusca').value.trim().toLowerCase();
+  const lista = (cat.modelos[atual.modelo] || []).filter(p => !filtro || p.peca.toLowerCase().includes(filtro));
+  $('listaPecas').innerHTML = lista.length ? '' : '<p class="muted">Nenhuma peça cadastrada para este modelo.</p>';
+  lista.forEach(p => {
+    const q = atual.pecas[p.peca] || 0;
+    const el = document.createElement('div');
+    el.className = 'peca' + (q ? ' sel' : '');
+    el.innerHTML = '<div class="nome"></div><div class="step"><button type="button">−</button><span>' + q + '</span><button type="button">+</button></div>';
+    el.querySelector('.nome').textContent = p.peca;
+    const [menos, mais] = el.querySelectorAll('button');
+    menos.onclick = () => mudarQtd(p.peca, -1);
+    mais.onclick = () => mudarQtd(p.peca, 1);
+    $('listaPecas').appendChild(el);
+  });
+}
+function mudarQtd(peca, d) {
+  const q = Math.max(0, (atual.pecas[peca] || 0) + d);
+  if (q) atual.pecas[peca] = q; else delete atual.pecas[peca];
+  salvar(); renderPecas(); renderResumo();
+}
+function renderResumo() {
+  const r = resumoDe(atual);
+  $('rsQtd').textContent = r.qtd; $('rsNivel').textContent = r.nivel;
+  $('rsPontos').textContent = String(r.pontos).replace('.', ','); $('rsCusto').textContent = brl(r.custo);
+}
+
+// ---------- Check list e pressão de referência ----------
+const CHECK_MANUTENCAO = [
+  'Capa: verificar se está em condições de uso (sem trincas, quebras ou encaixes soltos)',
+  'Placa: ligar a máquina e testar todos os botões e o display',
+  'Bomba: verificar se a pressão está dentro do normal'
+];
+const CHECK_LIBERACAO = [
+  'Capa: verificar se há riscos, quebras ou danos',
+  'Limpeza: conferir se foi feita corretamente, por dentro e por fora',
+  'Placa: testar todos os botões e o display',
+  'Reservatório: verificar se está em condições de uso (sem vazamento, trinca ou peça faltando)',
+  'Pescante e atuadores: verificar se estão bem encaixados e funcionando',
+  'Teste final: ligar a máquina e testar o funcionamento completo antes de liberar'
+];
+const MODELOS_AEROSOL = ['Aero', 'Aero Led'];      // sem reservatório, pescante e atuadores
+const ITENS_SEM_AEROSOL = [3, 4];                  // índices (0 = item 1) que não se aplicam a aerosol
+const ROTULO_CHECK = { ok: '✔ OK', prob: '✖ Problema', na: '— Não se aplica' };
+
+function renderCheck() {
+  atual.check = atual.check || {};
+  atual.checkObs = atual.checkObs || {};
+  const box = $('tbCheck');
+  box.innerHTML = '';
+  CHECK_MANUTENCAO.forEach((txt, i) => {
+    const el = document.createElement('div');
+    el.className = 'chk';
+    el.innerHTML = '<div class="txt"></div><div class="opts"></div>';
+    el.querySelector('.txt').textContent = (i + 1) + '. ' + txt;
+    Object.keys(ROTULO_CHECK).forEach(v => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'v-' + v + (atual.check[i] === v ? ' on' : '');
+      b.textContent = ROTULO_CHECK[v];
+      b.onclick = () => { atual.check[i] = v; salvar(); renderCheck(); };
+      el.querySelector('.opts').appendChild(b);
+    });
+    if (atual.check[i] === 'prob') {
+      const inp = document.createElement('input');
+      inp.className = 'full'; inp.placeholder = 'O que foi encontrado?';
+      inp.value = atual.checkObs[i] || '';
+      inp.oninput = e => { atual.checkObs[i] = e.target.value; salvar(); };
+      el.appendChild(inp);
+    }
+    box.appendChild(el);
+  });
+}
+function checkCompleto(m) {
+  return CHECK_MANUTENCAO.every((_, i) => m.check && m.check[i]);
+}
+/** Texto gravado na planilha, ex.: "1 OK · 2 Problema (botão power) · 3 OK" */
+function textoCheck(m) {
+  if (!m.check) return '';
+  return CHECK_MANUTENCAO.map((_, i) => {
+    const v = m.check[i];
+    if (!v) return (i + 1) + ' —';
+    const nome = { ok: 'OK', prob: 'Problema', na: 'N/A' }[v];
+    return (i + 1) + ' ' + nome + (v === 'prob' && m.checkObs && m.checkObs[i] ? ' (' + m.checkObs[i] + ')' : '');
+  }).join(' · ');
+}
+
+function renderPressao() {
+  const ref = (cat.pressoes || {})[atual.modelo];
+  const num = x => String(x.toFixed(2)).replace('.', ',');
+  $('tbPressaoRef').textContent = ref
+    ? 'Referência deste modelo: ' + num(ref.media) + ' · aceitável a partir de ' + num(ref.minimo)
+    : 'Sem referência de pressão para este modelo ainda.';
+  const v = parseFloat(String($('tbPressao').value).replace(',', '.'));
+  const aviso = $('tbPressaoAviso'), campo = $('tbPressao');
+  campo.style.borderColor = ''; campo.style.background = ''; aviso.textContent = '';
+  if (!ref || isNaN(v)) return;
+  const ok = v >= ref.minimo - 1e-9;
+  campo.style.borderColor = ok ? 'var(--ok)' : 'var(--err)';
+  campo.style.background = ok ? '#e7f6ec' : '#fdecea';
+  aviso.style.color = ok ? 'var(--ok)' : 'var(--err)';
+  aviso.textContent = ok ? '🟢 Pressão aceitável' : '🔴 Abaixo do aceitável (mínimo ' + num(ref.minimo) + ')';
+}
+
+function renderVerificar() {
+  const box = $('lbVerificar');
+  const ul = CHECK_LIBERACAO.map((t, i) => '<li' + (ITENS_SEM_AEROSOL.indexOf(i) >= 0 ? ' data-aero="1"' : '') + '></li>').join('');
+  box.innerHTML = '<b>O que verificar antes de liberar</b><ol>' + ul + '</ol>' +
+    '<div class="muted">Aero e Aero Led: itens 4 e 5 não se aplicam (não têm reservatório, pescante nem atuadores).</div>';
+  box.querySelectorAll('li').forEach((li, i) => {
+    li.textContent = CHECK_LIBERACAO[i];
+    if (li.dataset.aero && MODELOS_AEROSOL.indexOf($('lbModelo').textContent.trim()) >= 0) li.className = 'na';
+  });
+}
+
+function pedirFinalizar() {
+  const r = resumoDe(atual);
+  $('fmCodigo').textContent = atual.codigo + ' · ' + atual.modelo;
+  $('fmResumo').textContent = 'Tempo ' + fmtTempo(decorrido(atual)) + (atual.pausaMs || atual.pausadoEm ? ' (sem as pausas)' : '') + ' · ' + r.qtd + ' peças · nível ' + r.nivel +
+    ' · ' + String(r.pontos).replace('.', ',') + ' pts · R$ ' + brl(r.custo);
+  $('fmPecas').innerHTML = r.pecas.length ? '' : '<p style="color:var(--err)">Nenhuma peça marcada.</p>';
+  r.pecas.forEach(p => {
+    const d = document.createElement('div'); d.className = 'row';
+    d.innerHTML = '<span></span><b>' + p.qtd + 'x</b>'; d.firstChild.textContent = p.peca;
+    $('fmPecas').appendChild(d);
+  });
+  const faltaCheck = !checkCompleto(atual);
+  if (faltaCheck) {
+    const p = document.createElement('p');
+    p.style.color = 'var(--err)';
+    p.textContent = 'Responda todos os itens do check list antes de finalizar.';
+    $('fmPecas').appendChild(p);
+  }
+  $('fmConfirmar').disabled = !r.pecas.length || faltaCheck;
+  $('modalFim').classList.remove('hidden');
+}
+
+function confirmarFim() {
+  // Reabrir só serve para corrigir peças: mantém o horário de término original
+  encerrarPausa(atual);
+  atual.fim = atual.fimOriginal || Date.now();
+  delete atual.fimOriginal;
+  atual.pressao = $('tbPressao').value.trim();
+  st.andamento = st.andamento.filter(m => m.id !== atual.id);
+  st.concluidas.push(atual);
+  const r = resumoDe(atual);
+  toast(atual.codigo + ' finalizada: ' + fmtTempo(decorrido(atual)) + ', ' + String(r.pontos).replace('.', ',') + ' pts');
+  atual = null;
+  $('modalFim').classList.add('hidden');
+  salvar(); mostrar('telaInicio');
+  enviar(true);
+}
+
+// Janela de confirmação própria (o confirm() do navegador pode ser bloqueado em alguns aparelhos)
+function confirmar(texto, acao) {
+  $('cfTexto').textContent = texto;
+  $('cfOk').onclick = () => { $('modalConfirma').classList.add('hidden'); acao(); };
+  $('modalConfirma').classList.remove('hidden');
+}
+
+function descartar() {
+  const m = atual;
+  confirmar('Descartar a manutenção de ' + m.codigo + '? O tempo não será gravado.', () => {
+    st.andamento = st.andamento.filter(x => x.id !== m.id);
+    atual = null; salvar(); mostrar('telaInicio');
+  });
+}
+
+// ---------- outras tarefas e observação ----------
+function tarefaAtiva() { return st.tarefas.find(t => !t.fim && t.operador === st.operador); }
+
+function iniciarTarefa() {
+  if (!st.operador) return toast('Selecione o operador antes de começar.', true);
+  const tipo = $('tfTipo').value;
+  if (!tipo) return toast('Escolha a tarefa.', true);
+  if (tarefaAtiva()) return toast('Encerre a tarefa atual antes de começar outra.', true);
+  st.tarefas.push({ id: novoId(), operador: st.operador, tipo, inicio: Date.now() });
+  $('tfTipo').value = '';
+  salvar();
+}
+function pararTarefa() {
+  const t = tarefaAtiva();
+  if (!t) return;
+  t.fim = Date.now();
+  toast(t.tipo + ': ' + fmtTempo(t.fim - t.inicio));
+  salvar(); enviar(true);
+}
+function salvarObs() {
+  if (!st.operador) return toast('Selecione o operador.', true);
+  const hoje = new Date(), chave = st.operador + '|' + diaLocal(hoje);
+  st.obs[chave] = { id: chave, operador: st.operador, data: hoje.getTime(), texto: $('obsTexto').value.trim(), enviado: false };
+  salvar(); enviar(true);
+  toast('Observação salva.');
+}
+
+// ---------- liberação (verificadora): por modelo, com cronômetro ----------
+function ehVerificador(op = st.operador) { return (cat.verificadores || []).includes(op); }
+function liberacaoAtiva() { return st.liberacoes.find(l => !l.fim && l.operador === st.operador); }
+
+function iniciarLiberacao() {
+  const modelo = $('lbSelModelo').value;
+  if (!modelo) return toast('Escolha o modelo.', true);
+  if (liberacaoAtiva()) return toast('Finalize a liberação atual antes.', true);
+  st.liberacoes.push({ id: novoId(), operador: st.operador, modelo, inicio: Date.now(), qtd: 0 });
+  salvar();
+}
+// Ao finalizar, abre a janela para informar quantas máquinas foram liberadas → calcula a média
+function finalizarLiberacao() {
+  const l = liberacaoAtiva();
+  if (!l) return;
+  $('mlModelo').textContent = l.modelo;
+  $('mlTempo').textContent = 'Tempo: ' + fmtTempo(decorrido(l)) + (l.pausaMs || l.pausadoEm ? ' (sem as pausas)' : '');
+  $('mlQtd').value = '';
+  $('mlMedia').textContent = '';
+  $('modalLib').classList.remove('hidden');
+  setTimeout(() => $('mlQtd').focus(), 50);
+}
+function atualizarMediaLib() {
+  const l = liberacaoAtiva(), q = parseInt($('mlQtd').value, 10);
+  $('mlMedia').textContent = l && q > 0 ? 'Média: ' + fmtMin(decorrido(l) / q) + ' por máquina' : '';
+}
+function confirmarLiberacao() {
+  const l = liberacaoAtiva(), q = parseInt($('mlQtd').value, 10);
+  if (!l) return;
+  if (!(q > 0)) return toast('Informe a quantidade de máquinas liberadas.', true);
+  encerrarPausa(l);
+  l.qtd = q;
+  l.fim = Date.now();
+  $('modalLib').classList.add('hidden');
+  toast(l.modelo + ': ' + q + ' máq. em ' + fmtTempo(decorrido(l)) + ' (' + fmtMin(decorrido(l) / q) + '/máq.)');
+  salvar(); enviar(true);
+}
+function cancelarLiberacao() {
+  const l = liberacaoAtiva();
+  if (!l) return;
+  confirmar('Cancelar a liberação de ' + l.modelo + '? O tempo não será gravado.', () => {
+    st.liberacoes = st.liberacoes.filter(x => x.id !== l.id);
+    salvar();
+  });
+}
+const fmtMin = ms => { const m = Math.round(ms / 60000); return m >= 60 ? Math.floor(m / 60) + 'h' + String(m % 60).padStart(2, '0') : m + 'min'; };
+
+function renderLiberacao() {
+  const sel = $('lbSelModelo'), modelos = cat.modelosLiberacao || [];
+  if (sel.options.length !== modelos.length + 1) {
+    sel.innerHTML = '<option value="">Modelo...</option>';
+    modelos.forEach(n => { const o = document.createElement('option'); o.value = o.textContent = n; sel.appendChild(o); });
+  }
+  const ativa = liberacaoAtiva();
+  $('lbAtiva').classList.toggle('hidden', !ativa);
+  $('lbNova').classList.toggle('hidden', !!ativa);
+  if (ativa) { $('lbModelo').textContent = ativa.modelo; mostrarPausa(ativa, 'lbPausado', 'btnLbPausa', 'lbTimer'); }
+
+  const hoje = st.liberacoes.filter(l => l.fim && l.operador === st.operador && hojeStr(l.inicio) === hojeStr()).slice().reverse();
+  $('listaLiberacoes').innerHTML = '';
+  hoje.forEach(l => {
+    const d = document.createElement('div'); d.className = 'row';
+    d.innerHTML = '<div><b></b><div class="muted"></div></div><span class="tag"></span>';
+    d.querySelector('b').textContent = l.modelo + ' · ' + l.qtd + ' máq.';
+    d.querySelector('.muted').textContent = fmtTempo(decorrido(l)) + ' · ' + fmtMin(decorrido(l) / l.qtd) + ' por máquina';
+    const tag = d.querySelector('.tag'); tag.textContent = l.enviado ? 'enviada' : 'pendente'; tag.classList.add(l.enviado ? 'ok' : 'warn');
+    $('listaLiberacoes').appendChild(d);
+  });
+}
+
+// ---------- erros de qualidade (Patrícia) ----------
+function preencherSelect(sel, valores, rotulo) {
+  sel.innerHTML = rotulo ? '<option value="">' + rotulo + '</option>' : '';
+  valores.forEach(v => { const o = document.createElement('option'); o.value = o.textContent = v; sel.appendChild(o); });
+}
+
+function abrirErro(codigo) {
+  erroCodigo = codigo;
+  const ult = (cat.ultimaManutencao || {})[codigo];
+  const modelos = Object.keys(cat.modelos).sort((a, b) => a.localeCompare(b));
+  preencherSelect($('erModelo'), modelos, 'Modelo...');
+  preencherSelect($('erOperador'), cat.operadores || [], 'Operadora...');
+  preencherSelect($('erCategoria'), cat.categoriasErro || [], 'Categoria...');
+  $('erSugestoes').innerHTML = '';
+  (cat.sugestoesDefeito || []).forEach(s => { const o = document.createElement('option'); o.value = s; $('erSugestoes').appendChild(o); });
+  $('erLista').innerHTML = '';
+  (cat.errosAplicaveis || []).forEach(s => { const li = document.createElement('li'); li.textContent = s; $('erLista').appendChild(li); });
+
+  $('erCod').textContent = codigo;
+  $('erModelo').value = (ult && ult.modelo) || cat.maquinas[codigo] || '';
+  $('erOperador').value = (ult && ult.operador) || '';
+  $('erInfo').textContent = ult
+    ? 'Última manutenção: ' + ult.operador + (ult.data ? ' em ' + new Date(ult.data).toLocaleDateString('pt-BR') : '') + (ult.numero ? ' (' + ult.numero + ')' : '')
+    : 'Máquina sem manutenção registrada — escolha o modelo e a operadora.';
+  ['erCategoria', 'erDefeito', 'erObs'].forEach(id => { $(id).value = ''; });
+  $('erAplicavel').value = 'Sim'; $('erCorrigido').value = 'Sim';
+  $('modalErro').classList.remove('hidden');
+}
+
+function salvarErro() {
+  const modelo = $('erModelo').value, operador = $('erOperador').value, categoria = $('erCategoria').value;
+  const defeito = $('erDefeito').value.trim();
+  if (!modelo || !operador || !categoria || !defeito) return toast('Preencha modelo, operadora, categoria e defeito.', true);
+  const ult = (cat.ultimaManutencao || {})[erroCodigo];
+  st.erros.push({ id: novoId(), data: Date.now(), codigo: erroCodigo, modelo, operador, categoria, defeito,
+    aplicavel: $('erAplicavel').value, corrigido: $('erCorrigido').value, obs: $('erObs').value.trim(),
+    numero: ult && ult.operador === operador ? ult.numero : '', registradoPor: st.operador });
+  $('modalErro').classList.add('hidden');
+  toast('Erro registrado: ' + erroCodigo + ' · ' + operador);
+  erroCodigo = null;
+  salvar(); enviar(true);
+}
+
+function renderErros() {
+  const hoje = st.erros.filter(e => hojeStr(e.data) === hojeStr()).slice().reverse();
+  $('listaErros').innerHTML = '';
+  hoje.forEach(e => {
+    const d = document.createElement('div'); d.className = 'row';
+    d.innerHTML = '<div><b></b><div class="muted"></div></div><span class="tag"></span>';
+    d.querySelector('b').textContent = e.codigo + ' · ' + e.operador;
+    d.querySelector('.muted').textContent = e.modelo + ' · ' + e.categoria + ' · ' + e.defeito + (e.aplicavel === 'Sim' ? ' · aplicável' : '');
+    const tag = d.querySelector('.tag'); tag.textContent = e.enviado ? 'enviado' : 'pendente'; tag.classList.add(e.enviado ? 'ok' : 'warn');
+    $('listaErros').appendChild(d);
+  });
+}
+
+// ---------- peças usadas fora da manutenção (Patrícia) ----------
+function renderPecasUsadas() {
+  const selM = $('pcModelo'), selP = $('pcPeca');
+  const modelos = Object.keys(cat.modelos).sort((a, b) => a.localeCompare(b));
+  if (selM.options.length !== modelos.length + 1) preencherSelect(selM, modelos, 'Modelo...');
+  const pecas = (cat.modelos[selM.value] || []).filter(p => p.peca !== 'Limpeza').map(p => p.peca);
+  if (selP.dataset.modelo !== selM.value) { preencherSelect(selP, pecas, selM.value ? 'Peça...' : 'Escolha o modelo primeiro'); selP.dataset.modelo = selM.value; }
+  const hoje = st.pecas.filter(p => p.operador === st.operador && hojeStr(p.data) === hojeStr()).slice().reverse();
+  $('listaPecasUsadas').innerHTML = '';
+  hoje.forEach(p => {
+    const d = document.createElement('div'); d.className = 'row';
+    d.innerHTML = '<div><b></b><div class="muted"></div></div><span class="tag"></span>';
+    d.querySelector('b').textContent = p.qtd + '× ' + p.peca;
+    d.querySelector('.muted').textContent = p.modelo + (p.codigo ? ' · ' + p.codigo : '');
+    const tag = d.querySelector('.tag'); tag.textContent = p.enviado ? 'enviada' : 'pendente'; tag.classList.add(p.enviado ? 'ok' : 'warn');
+    $('listaPecasUsadas').appendChild(d);
+  });
+}
+function registrarPeca() {
+  const modelo = $('pcModelo').value, peca = $('pcPeca').value, qtd = parseInt($('pcQtd').value, 10);
+  if (!modelo || !peca) return toast('Escolha o modelo e a peça.', true);
+  if (!(qtd > 0)) return toast('Informe a quantidade.', true);
+  const info = (cat.modelos[modelo] || []).find(p => p.peca === peca) || {};
+  st.pecas.push({ id: novoId(), data: Date.now(), operador: st.operador, codigo: $('pcCodigo').value.trim().toUpperCase(),
+    modelo, peca, qtd, custo: info.custo || 0, bling: info.bling || '' });
+  $('pcCodigo').value = ''; $('pcQtd').value = 1; $('pcPeca').value = '';
+  toast('Peça registrada: ' + qtd + '× ' + peca);
+  salvar(); enviar(true);
+}
+
+// ---------- entrada de máquinas no estoque ----------
+function registrarEntrada() {
+  const responsavel = $('enResp').value, modelo = $('enModelo').value, qtd = parseInt($('enQtd').value, 10);
+  if (!responsavel) return toast('Escolha quem está dando entrada.', true);
+  if (!modelo) return toast('Escolha o modelo.', true);
+  if (!qtd) return toast('Informe a quantidade (use número negativo para corrigir).', true);
+  st.respEntrada = responsavel;
+  st.entradas.push({ id: novoId(), data: Date.now(), modelo, qtd, responsavel });
+  $('enQtd').value = ''; $('enModelo').value = '';
+  toast('Entrada: ' + qtd + ' × ' + modelo);
+  salvar(); enviar(true);
+}
+
+function renderEntradas() {
+  const resp = $('enResp'), mod = $('enModelo');
+  const lista = cat.responsaveisEntrada || [], modelos = cat.modelosEstoque || [];
+  if (resp.options.length !== lista.length + 1) {
+    resp.innerHTML = '<option value="">Quem está dando entrada...</option>';
+    lista.forEach(n => { const o = document.createElement('option'); o.value = o.textContent = n; resp.appendChild(o); });
+  }
+  if (!resp.value && st.respEntrada) resp.value = st.respEntrada;
+  if (mod.options.length !== modelos.length + 1) {
+    mod.innerHTML = '<option value="">Modelo...</option>';
+    modelos.forEach(n => { const o = document.createElement('option'); o.value = o.textContent = n; mod.appendChild(o); });
+  }
+
+  const hoje = st.entradas.filter(e => hojeStr(e.data) === hojeStr()).slice().reverse();
+  $('listaEntradas').innerHTML = '';
+  hoje.forEach(e => {
+    const d = document.createElement('div'); d.className = 'row';
+    d.innerHTML = '<span></span><span class="muted"></span>';
+    d.firstChild.textContent = (e.qtd > 0 ? '+' : '') + e.qtd + ' × ' + e.modelo;
+    d.lastChild.textContent = e.responsavel + ' · ' + new Date(e.data).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) + (e.enviado ? ' ✓' : ' (pendente)');
+    if (!e.enviado) {
+      const b = document.createElement('button'); b.textContent = 'Desfazer'; b.style.cssText = 'padding:4px 10px;font-size:13px;margin-left:8px';
+      b.onclick = () => { st.entradas = st.entradas.filter(x => x.id !== e.id); salvar(); };
+      d.lastChild.appendChild(b);
+    }
+    $('listaEntradas').appendChild(d);
+  });
+
+  const est = cat.estoque || [];
+  $('enResumo').textContent = est.length
+    ? 'Estoque atual: ' + est.reduce((s, m) => s + m.estoque, 0) + ' máquinas · ' + est.reduce((s, m) => s + m.consertaveis, 0) + ' consertáveis'
+    : 'Estoque ainda não iniciado na planilha';
+  $('tabEstoque').innerHTML = '';
+  est.forEach(m => {
+    const d = document.createElement('div'); d.className = 'row';
+    d.innerHTML = '<span></span><span class="muted"></span>';
+    d.firstChild.textContent = m.modelo;
+    d.lastChild.textContent = m.estoque + ' · ' + m.consertaveis + ' consertáveis' + (m.peca ? ' · falta ' + m.peca : '');
+    $('tabEstoque').appendChild(d);
+  });
+}
+
+// ---------- envio ----------
+// Envia tudo o que está pendente. Roda sozinho após cada manutenção/tarefa (silencioso) e pelo botão.
+let enviando = false;
+function pendentes() {
+  return {
+    manutencoes: st.concluidas.filter(m => !m.enviado),
+    tarefas: st.tarefas.filter(t => t.fim && !t.enviado),
+    observacoes: Object.values(st.obs).filter(o => !o.enviado),
+    entradas: st.entradas.filter(e => !e.enviado),
+    liberacoes: st.liberacoes.filter(l => l.fim && !l.enviado),
+    erros: st.erros.filter(e => !e.enviado),
+    pecas: st.pecas.filter(p => !p.enviado)
+  };
+}
+function enviar(silencioso) {
+  const p = pendentes();
+  const total = p.manutencoes.length + p.tarefas.length + p.observacoes.length + p.entradas.length + p.liberacoes.length + p.erros.length + p.pecas.length;
+  if (!total) { if (!silencioso) toast('Nada pendente para enviar.'); return; }
+  if (enviando) return;
+  enviando = true;
+  const pend = p.manutencoes;
+  const payload = {
+    manutencoes: pend.map(m => ({ id: m.id, operador: m.operador, codigo: m.codigo, modelo: m.modelo,
+      inicio: m.inicio, fim: m.fim, pausaMs: m.pausaMs || 0, pressao: m.pressao, checklist: textoCheck(m), pecas: pecasDe(m).map(x => ({ peca: x.peca, qtd: x.qtd, custo: x.custo, bling: x.bling })) })),
+    tarefas: p.tarefas.map(t => ({ id: t.id, operador: t.operador, tipo: t.tipo, inicio: t.inicio, fim: t.fim })),
+    observacoes: p.observacoes.map(o => ({ id: o.id, operador: o.operador, data: o.data, texto: o.texto })),
+    entradas: p.entradas.map(e => ({ id: e.id, data: e.data, modelo: e.modelo, qtd: e.qtd, responsavel: e.responsavel })),
+    liberacoes: p.liberacoes.map(l => ({ id: l.id, operador: l.operador, modelo: l.modelo, qtd: l.qtd, inicio: l.inicio, fim: l.fim, pausaMs: l.pausaMs || 0 })),
+    erros: p.erros.map(({ enviado, ...e }) => e),
+    pecas: p.pecas.map(({ enviado, ...x }) => x)
+  };
+  const btn = $('btnEnviar'); btn.disabled = true; btn.textContent = 'Enviando...';
+  api('enviar', payload).then(r => {
+    p.tarefas.forEach(t => { if ((r.tarefasOk || []).includes(t.id)) t.enviado = true; });
+    p.observacoes.forEach(o => { if ((r.obsOk || []).includes(o.id)) o.enviado = true; });
+    p.entradas.forEach(e => { if ((r.entradasOk || []).includes(e.id)) e.enviado = true; });
+    p.liberacoes.forEach(l => { if ((r.liberacoesOk || []).includes(l.id)) l.enviado = true; });
+    p.erros.forEach(e => { if ((r.errosOk || []).includes(e.id)) e.enviado = true; });
+    p.pecas.forEach(x => { if ((r.pecasOk || []).includes(x.id)) x.enviado = true; });
+    if (r.gravadas || (r.entradasOk || []).length || (r.liberacoesOk || []).length) setTimeout(atualizarCatalogo, 500); // estoque e totais atualizados
+    pend.forEach(m => {
+      if (!r.numeros[m.id]) return;
+      m.enviado = true; m.numero = r.numeros[m.id];
+      cat.maquinas[m.codigo] = m.modelo;
+      // Mantém o painel de meta certo até a próxima atualização do catálogo
+      if (cat.mes && mesAno(m.fim) === cat.mesAtual) {
+        const t = cat.mes[m.operador] = cat.mes[m.operador] || { maquinas: 0, pontos: 0 };
+        t.maquinas++; t.pontos += resumoDe(m).pontos;
+      }
+    });
+    try { localStorage.setItem(LS_CAT, JSON.stringify(cat)); } catch (e) {}
+    salvar();
+    if (!silencioso) toast('Tudo enviado para a planilha ✓');
+  }).catch(e => {
+    if (!silencioso) toast('Falha ao enviar: ' + (e.message || e) + '. Os dados continuam salvos no aparelho.', true);
+  }).finally(() => { enviando = false; btn.disabled = false; render(); });
+}
+
+// ---------- telas ----------
+function mostrar(id) {
+  if (!st.operador) id = 'telaLogin'; // ninguém logado: tela de entrada
+  ['telaLogin', 'telaInicio', 'telaMaquina', 'telaTrabalho'].forEach(t => $(t).classList.toggle('hidden', t !== id));
+  document.querySelector('header .stats').classList.toggle('hidden', id === 'telaLogin');
+  $('btnSair').classList.toggle('hidden', id === 'telaLogin');
+  if (id !== 'telaTrabalho') atual = null;
+  if (id === 'telaInicio') { $('inScan').value = ''; setTimeout(() => $('inScan').focus(), 50); }
+  window.scrollTo(0, 0);
+}
+
+// ---------- entrada por nome ----------
+let loginNome = null;
+function montarOperadores() {
+  $('nomeUser').textContent = st.operador || 'Assistência Técnica';
+  const pessoas = (cat.operadores || []).map(n => [n, 'Manutenção'])
+    .concat((cat.verificadores || []).map(n => [n, 'Verificação e qualidade']));
+  $('listaNomes').innerHTML = '';
+  pessoas.forEach(([nome, funcao]) => {
+    const b = document.createElement('button');
+    b.className = 'big'; b.style.cssText = 'display:flex;justify-content:space-between;align-items:center;text-align:left';
+    b.innerHTML = '<span></span><small class="muted" style="font-weight:400"></small>';
+    b.firstChild.textContent = nome; b.lastChild.textContent = funcao;
+    b.onclick = () => escolherNome(nome);
+    $('listaNomes').appendChild(b);
+  });
+  $('msgLogin').textContent = pessoas.length ? '' : 'Carregando…';
+}
+function escolherNome(nome) {
+  if ((cat.usaPin || []).includes(nome)) {
+    loginNome = nome;
+    $('pinNome').textContent = nome; $('pinInput').value = '';
+    $('listaNomes').classList.add('hidden'); $('boxPin').classList.remove('hidden');
+    setTimeout(() => $('pinInput').focus(), 50);
+  } else entrarComo(nome);
+}
+function confirmarPin() {
+  $('msgLogin').textContent = 'Conferindo…';
+  api('entrar', { nome: loginNome, pin: $('pinInput').value }).then(r => {
+    if (r.ok) entrarComo(r.nome);
+    else { $('msgLogin').textContent = r.erro; $('pinInput').value = ''; }
+  }).catch(() => { $('msgLogin').textContent = 'Sem conexão para conferir a senha. Tente de novo.'; });
+}
+function voltarLogin() {
+  loginNome = null;
+  $('boxPin').classList.add('hidden'); $('listaNomes').classList.remove('hidden'); $('msgLogin').textContent = '';
+}
+function entrarComo(nome) {
+  st.operador = nome; voltarLogin(); salvar(); montarOperadores(); mostrar('telaInicio');
+}
+function sair() {
+  const andamento = st.andamento.filter(m => m.operador === st.operador).length + (liberacaoAtiva() ? 1 : 0);
+  const sairJa = () => { st.operador = ''; salvar(); montarOperadores(); mostrar('telaLogin'); };
+  if (andamento) confirmar('Você tem ' + andamento + ' item(ns) em andamento. Eles continuam salvos neste aparelho. Sair mesmo assim?', sairJa);
+  else sairJa();
+}
+function montarModelos(sel, valor) {
+  const modelos = Object.keys(cat.modelos).sort((a, b) => a.localeCompare(b));
+  sel.innerHTML = '<option value="">Escolha...</option>' + modelos.map(m => '<option></option>').join('');
+  modelos.forEach((m, i) => { sel.options[i + 1].value = m; sel.options[i + 1].textContent = m; });
+  sel.value = valor || '';
+}
+
+const MESES = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+const mesAno = d => { d = new Date(d); return MESES[d.getMonth()] + '/' + String(d.getFullYear()).slice(-2); };
+const fmtPts = n => String(Math.round(n * 10) / 10).replace('.', ',');
+
+function renderMeta() {
+  const card = $('cardMeta'), op = st.operador;
+  if (!op || !cat.mesAtual || mesAno(Date.now()) !== cat.mesAtual) { card.classList.add('hidden'); return; }
+  const verif = ehVerificador();
+  const base = (cat.mes && cat.mes[op]) || { maquinas: 0, pontos: 0 };
+  let pts, m, unidade;
+  if (verif) {
+    // Patrícia: máquinas liberadas x 95% / 100% das feitas por Magna e Fernanda até 2 dias antes do fim do mês
+    const locais = st.liberacoes.filter(l => l.fim && !l.enviado && l.operador === op && mesAno(l.inicio) === cat.mesAtual);
+    pts = base.maquinas + locais.reduce((s, l) => s + l.qtd, 0);
+    const ml = cat.metaLiberacao;
+    m = ml && ml.base ? { meta: ml.meta, superMeta: ml.superMeta } : null;
+    unidade = 'liberadas';
+    $('mtMaq').textContent = ml && ml.base ? 'base: ' + ml.base + ' feitas até ' + new Date(ml.corte).toLocaleDateString('pt-BR').slice(0, 5) : '';
+  } else {
+    // Já enviado (servidor) + concluído no aparelho e ainda não enviado
+    const locais = st.concluidas.filter(x => !x.enviado && x.operador === op && mesAno(x.fim) === cat.mesAtual);
+    pts = base.pontos + locais.reduce((s, x) => s + resumoDe(x).pontos, 0);
+    m = cat.meta;
+    unidade = 'pts';
+    const maq = base.maquinas + locais.length;
+    $('mtMaq').textContent = maq + ' máquinas';
+    // Bônus: erros de qualidade aplicáveis acima de 1% das máquinas do mês = sem bônus
+    const lim = Math.floor(maq * (cat.limiteErros || 0.01)), err = base.erros || 0;
+    $('mtErros').textContent = 'Erros de qualidade no mês: ' + err + ' · ' +
+      (err > maq * (cat.limiteErros || 0.01) ? '⚠ sem bônus (limite ' + lim + ')' : 'bônus OK (até ' + lim + ')');
+  }
+  if (verif) $('mtErros').textContent = '';
+  card.classList.remove('hidden');
+  $('mtTitulo').textContent = 'Meta do mês · ' + cat.mesAtual;
+  $('mtPontos').textContent = fmtPts(pts);
+  $('mtUnid').textContent = unidade;
+  const fill = $('mtFill'), tag = $('mtTag');
+  if (verif && !m) { $('mtMeta').textContent = 'A meta aparece quando houver máquinas feitas no mês'; $('mtSuper').textContent = '';
+    $('mtFalta').textContent = ''; tag.textContent = ''; fill.style.width = '0'; $('mtMarca').style.display = 'none'; return; }
+  if (!m) { $('mtMeta').textContent = 'Meta do mês não cadastrada na planilha Métricas'; $('mtSuper').textContent = '';
+    $('mtFalta').textContent = ''; tag.textContent = ''; fill.style.width = '0'; $('mtMarca').style.display = 'none'; return; }
+  fill.style.width = Math.min(100, pts / m.superMeta * 100) + '%';
+  $('mtMarca').style.display = ''; $('mtMarca').style.left = (m.meta / m.superMeta * 100) + '%';
+  $('mtMeta').textContent = 'Meta ' + m.meta; $('mtSuper').textContent = 'Super ' + m.superMeta;
+  fill.className = pts >= m.superMeta ? 'super' : pts >= m.meta ? 'meta' : '';
+  tag.className = 'tag ' + (pts >= m.superMeta ? 'gold' : pts >= m.meta ? 'ok' : 'warn');
+  tag.textContent = pts >= m.superMeta ? '🏆 Super meta' : pts >= m.meta ? '✓ Meta' : Math.floor(pts / m.meta * 100) + '% da meta';
+  const u = verif ? ' máquinas' : ' pts';
+  $('mtFalta').textContent = pts >= m.superMeta ? 'Super meta batida!'
+    : pts >= m.meta ? 'Faltam ' + fmtPts(m.superMeta - pts) + u + ' para a super meta.'
+    : 'Faltam ' + fmtPts(m.meta - pts) + u + ' para a meta e ' + fmtPts(m.superMeta - pts) + ' para a super.';
+}
+
+function renderTarefas() {
+  const sel = $('tfTipo');
+  const tipos = cat.tiposTarefa || [];
+  if (sel.options.length !== tipos.length + 1) {
+    sel.innerHTML = '<option value="">Escolha a tarefa...</option>';
+    tipos.forEach(t => { const o = document.createElement('option'); o.value = o.textContent = t; sel.appendChild(o); });
+  }
+  const ativa = tarefaAtiva();
+  $('tfAtiva').classList.toggle('hidden', !ativa);
+  $('tfNova').classList.toggle('hidden', !!ativa);
+  if (ativa) { $('tfNome').textContent = ativa.tipo; $('tfTimer').dataset.ini = ativa.inicio; }
+
+  const lista = st.tarefas.filter(t => t.fim && t.operador === st.operador && hojeStr(t.inicio) === hojeStr()).slice().reverse();
+  $('listaTarefas').innerHTML = '';
+  lista.forEach(t => {
+    const d = document.createElement('div'); d.className = 'row';
+    d.innerHTML = '<span></span><span class="muted"></span>';
+    d.firstChild.textContent = t.tipo;
+    d.lastChild.textContent = fmtTempo(t.fim - t.inicio) + (t.enviado ? ' ✓' : '');
+    $('listaTarefas').appendChild(d);
+  });
+
+  const o = st.operador && st.obs[st.operador + '|' + diaLocal()];
+  if (document.activeElement !== $('obsTexto')) $('obsTexto').value = o ? o.texto : '';
+}
+
+function render() {
+  renderMeta();
+  // Verificadora (Patrícia): cronômetro de liberação; operadoras: bipagem de manutenção
+  const verif = ehVerificador();
+  $('cardLiberacao').classList.toggle('hidden', !verif);
+  $('cardErros').classList.toggle('hidden', !verif);
+  $('cardPecas').classList.toggle('hidden', !verif);
+  if (verif) { renderErros(); renderPecasUsadas(); }
+  ['cardScan', 'cardConcluidas'].forEach(id => $(id).classList.toggle('hidden', verif));
+  if (verif) {
+    renderLiberacao();
+    const libHoje = st.liberacoes.filter(l => l.fim && l.operador === st.operador && hojeStr(l.inicio) === hojeStr());
+    const qtd = libHoje.reduce((s, l) => s + l.qtd, 0), ms = libHoje.reduce((s, l) => s + decorrido(l), 0);
+    $('stPontos').textContent = qtd; $('lbl1').textContent = 'liberadas hoje';
+    $('stQtd').textContent = qtd ? Math.round(ms / qtd / 60000) : 0; $('lbl2').textContent = 'min/máquina';
+  } else {
+    const hoje = st.concluidas.filter(m => hojeStr(m.fim) === hojeStr() && m.operador === st.operador);
+    $('stPontos').textContent = String(hoje.reduce((s, m) => s + resumoDe(m).pontos, 0)).replace('.', ',');
+    $('stQtd').textContent = hoje.length;
+    $('lbl1').textContent = 'pontos hoje'; $('lbl2').textContent = 'máquinas';
+  }
+  const p = pendentes();
+  const pend = p.manutencoes.length + p.tarefas.length + p.observacoes.length + p.entradas.length + p.liberacoes.length + p.erros.length + p.pecas.length;
+  $('stPend').textContent = pend;
+  if (!enviando) $('btnEnviar').textContent = pend ? 'Enviar para a planilha (' + pend + ' pendente' + (pend > 1 ? 's' : '') + ')' : 'Tudo enviado ✓';
+  renderTarefas();
+  renderEntradas();
+
+  $('cardAndamento').classList.toggle('hidden', verif || !st.andamento.length);
+  $('listaAndamento').innerHTML = '';
+  st.andamento.forEach(m => {
+    const d = document.createElement('div'); d.className = 'row';
+    d.innerHTML = '<div><b></b><div class="muted"></div></div><span class="tag warn" data-mid="' + m.id + '"></span>';
+    d.querySelector('b').textContent = m.codigo;
+    d.querySelector('.muted').textContent = m.modelo + ' · ' + m.operador + (m.pausadoEm ? ' · ⏸ pausada' : '');
+    d.style.cursor = 'pointer'; d.onclick = () => abrirTrabalho(m);
+    $('listaAndamento').appendChild(d);
+  });
+
+  const lista = st.concluidas.filter(m => m.operador === st.operador && (hojeStr(m.fim) === hojeStr() || !m.enviado)).slice().reverse();
+  $('listaConcluidas').innerHTML = lista.length ? '' : '<p class="muted">Nenhuma ainda.</p>';
+  lista.forEach(m => {
+    const r = resumoDe(m);
+    const d = document.createElement('div'); d.className = 'row';
+    d.innerHTML = '<div><b></b><div class="muted"></div></div><div style="text-align:right"><span class="tag"></span><br></div>';
+    d.querySelector('b').textContent = m.codigo + (m.numero ? ' · ' + m.numero : '');
+    d.querySelector('.muted').textContent = m.modelo + ' · ' + fmtTempo(decorrido(m)) + ' · ' + r.qtd + ' peças · ' + String(r.pontos).replace('.', ',') + ' pts';
+    const tag = d.querySelector('.tag');
+    tag.textContent = m.enviado ? 'enviada' : 'pendente'; tag.classList.add(m.enviado ? 'ok' : 'warn');
+    if (!m.enviado) {
+      const b = document.createElement('button'); b.textContent = 'Reabrir'; b.style.cssText = 'padding:4px 10px;margin-top:4px;font-size:13px';
+      b.onclick = () => { st.concluidas = st.concluidas.filter(x => x.id !== m.id); m.fimOriginal = m.fim; delete m.fim; st.andamento.push(m); salvar(); abrirTrabalho(m); };
+      d.lastChild.appendChild(b);
+    }
+    $('listaConcluidas').appendChild(d);
+  });
+  tick();
+}
+
+function tick() {
+  document.querySelectorAll('[data-ini]').forEach(el => { el.textContent = fmtTempo(Date.now() - Number(el.dataset.ini)); });
+  document.querySelectorAll('[data-mid]').forEach(el => {
+    const m = st.andamento.find(x => x.id === el.dataset.mid);
+    if (m) el.textContent = fmtTempo(decorrido(m));
+  });
+  if (atual) $('tbTimer').textContent = fmtTempo(decorrido(atual));
+  const lib = liberacaoAtiva();
+  if (lib) $('lbTimer').textContent = fmtTempo(decorrido(lib));
+}
+
+function toast(msg, erro) {
+  const t = $('toast'); t.textContent = msg; t.className = erro ? 'err' : '';
+  clearTimeout(toast.h); toast.h = setTimeout(() => t.classList.add('hidden'), erro ? 6000 : 3500);
+}
+
+// ---------- câmera ----------
+function abrirCamera() {
+  if (!window.Html5Qrcode) return toast('Leitor de câmera indisponível. Use o leitor de código ou digite.', true);
+  $('modalCam').classList.remove('hidden');
+  leitorCam = new Html5Qrcode('leitor');
+  leitorCam.start({ facingMode: 'environment' }, { fps: 10, qrbox: { width: 260, height: 140 } }, texto => {
+    fecharCamera(); processarCodigo(texto);
+  }).catch(() => { fecharCamera(); toast('Não foi possível abrir a câmera. Use o leitor de código ou digite.', true); });
+}
+function fecharCamera() {
+  $('modalCam').classList.add('hidden');
+  if (leitorCam) { leitorCam.stop().catch(() => {}).finally(() => { try { leitorCam.clear(); } catch (e) {} leitorCam = null; }); }
+}
+
+// Leitor de código USB/Bluetooth funciona como teclado: digita rápido e termina com Enter.
+// Fora da tela inicial, capturamos as teclas para permitir "bipar de novo" para finalizar.
+let bufLeitor = '', bufHora = 0;
+document.addEventListener('keydown', e => {
+  const tag = (document.activeElement || {}).tagName;
+  if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') return;
+  if (Date.now() - bufHora > 400) bufLeitor = '';
+  bufHora = Date.now();
+  if (e.key === 'Enter') {
+    if (bufLeitor.length >= 3) { e.preventDefault(); processarCodigo(bufLeitor); }
+    bufLeitor = '';
+  } else if (e.key.length === 1) bufLeitor += e.key;
+});
+
+// ---------- eventos ----------
+$('formScan').onsubmit = e => { e.preventDefault(); processarCodigo($('inScan').value); $('inScan').value = ''; };
+$('btnCam').onclick = abrirCamera;
+$('camFechar').onclick = fecharCamera;
+$('btnSair').onclick = sair;
+$('pinOk').onclick = confirmarPin;
+$('pinVoltar').onclick = voltarLogin;
+$('pinInput').onkeydown = e => { if (e.key === 'Enter') confirmarPin(); };
+$('btnIniciar').onclick = iniciar;
+$('btnCancelarMq').onclick = () => mostrar('telaInicio');
+$('btnVoltar').onclick = () => mostrar('telaInicio');
+$('btnFinalizar').onclick = pedirFinalizar;
+$('btnDescartar').onclick = descartar;
+$('fmVoltar').onclick = () => $('modalFim').classList.add('hidden');
+$('fmConfirmar').onclick = confirmarFim;
+$('btnEnviar').onclick = () => enviar(false);
+$('btnTfIniciar').onclick = iniciarTarefa;
+$('btnTfParar').onclick = pararTarefa;
+$('btnObs').onclick = salvarObs;
+$('btnEntrada').onclick = registrarEntrada;
+$('btnPeca').onclick = registrarPeca;
+$('pcModelo').onchange = renderPecasUsadas;
+$('btnLbIniciar').onclick = iniciarLiberacao;
+$('btnLbFim').onclick = finalizarLiberacao;
+$('btnLbCancelar').onclick = cancelarLiberacao;
+$('btnLbPausa').onclick = () => alternarPausa(liberacaoAtiva());
+$('btnPausa').onclick = () => { alternarPausa(atual); mostrarPausa(atual, 'tbPausado', 'btnPausa', 'tbTimer'); };
+$('formErro').onsubmit = e => { e.preventDefault(); processarCodigo($('erCodigo').value); $('erCodigo').value = ''; };
+$('btnErCam').onclick = abrirCamera;
+$('erVoltar').onclick = () => { $('modalErro').classList.add('hidden'); erroCodigo = null; };
+$('erSalvar').onclick = salvarErro;
+$('mlVoltar').onclick = () => $('modalLib').classList.add('hidden');
+$('mlConfirmar').onclick = confirmarLiberacao;
+$('mlQtd').oninput = atualizarMediaLib;
+$('mlQtd').onkeydown = e => { if (e.key === 'Enter') confirmarLiberacao(); };
+$('tbBusca').oninput = renderPecas;
+$('tbPressao').oninput = e => { if (atual) { atual.pressao = e.target.value; salvar(); renderPressao(); } };
+$('btnLbVerificar').onclick = () => { renderVerificar(); $('lbVerificar').classList.toggle('hidden'); };
+
+carregar(); montarOperadores(); render(); mostrar('telaInicio');
+setInterval(tick, 1000);
+setInterval(() => enviar(true), 120000); // tenta de novo o que ficou pendente (ex.: sem internet)
+atualizarCatalogo();
+enviar(true);
+</script>
+</body>
+</html>
