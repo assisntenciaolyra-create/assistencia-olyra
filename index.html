@@ -196,6 +196,17 @@
       <div id="listaAndamento"></div>
     </div>
 
+    <div class="card hidden" id="cardAjuste">
+      <h2>➕ Peça esquecida</h2>
+      <p class="muted" style="margin:0 0 8px">Só para manutenções que você fez neste mês.</p>
+      <select id="ajNumero" class="full" style="margin-bottom:8px"></select>
+      <div class="scan">
+        <select id="ajPeca" style="flex:1 1 auto;min-width:0"></select>
+        <input id="ajQtd" type="number" min="1" inputmode="numeric" placeholder="Qtd" style="flex:0 0 90px;width:90px;font-size:20px;font-weight:700;text-align:center;padding:12px 6px;border:1px solid var(--line);border-radius:10px">
+      </div>
+      <button class="big" id="btnAjSalvar" style="margin-top:10px">Adicionar peça</button>
+    </div>
+
     <div class="card" id="cardConcluidas">
       <h2>Concluídas hoje</h2>
       <div id="listaConcluidas"></div>
@@ -208,6 +219,8 @@
           <div><b id="tfNome"></b><div class="muted">em andamento</div></div>
           <span class="tag warn" id="tfTimer"></span>
         </div>
+        <div class="pausado hidden" id="tfPausado">⏸ PAUSADO — o tempo parado não conta</div>
+        <button class="big" id="btnTfPausa" style="margin-bottom:10px">⏸ Pausar</button>
         <button class="big pri" id="btnTfParar">■ Encerrar tarefa</button>
       </div>
       <div id="tfNova" class="scan">
@@ -381,12 +394,12 @@
 
 <script>
 // Preencha apenas se hospedar este HTML fora do Apps Script (URL do App da Web /exec).
-const API_URL = 'https://script.google.com/macros/s/AKfycbySnPDWxm1-P_XD6Vz6DSXNANf8znAl9I_cF9qc6AVSZyk5qfdXnpNqcNAUiL90YGEe/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycby72i9Vv23yF-5jksq2RKONbwEGZsxiRlFH9byF2mca6wlfT_JdYYptsh3X_qtSHWzY/exec';
 const CHAVE_APP = 'zl0fyk1nsiormg3w4tc9p25q';
 const LS_ESTADO = 'manut_estado_v1', LS_CAT = 'manut_catalogo_v1';
 
 let cat = { modelos: {}, maquinas: {}, operadores: [] };
-let st = { operador: '', andamento: [], concluidas: [], tarefas: [], obs: {}, entradas: [], respEntrada: '', liberacoes: [], erros: [], pecas: [] };
+let st = { operador: '', andamento: [], concluidas: [], tarefas: [], obs: {}, entradas: [], respEntrada: '', liberacoes: [], erros: [], pecas: [], ajustes: [] };
 let erroCodigo = null; // código do erro de qualidade sendo registrado
 let atual = null;       // manutenção aberta na tela de trabalho
 let novoCodigo = null;  // código bipado aguardando "Iniciar"
@@ -416,7 +429,7 @@ const novoId = () => Date.now().toString(36) + Math.random().toString(36).slice(
 
 // ---------- comunicação com o Apps Script ----------
 function api(action, payload) {
-  const fn = { catalogo: 'getDados', enviar: 'enviarDia', entrar: 'entrar' }[action];
+  const fn = { catalogo: 'getDados', enviar: 'enviarDia', entrar: 'entrar', ajuste: 'registrarAjuste' }[action];
   if (window.google && google.script && google.script.run) {
     return new Promise((res, rej) => google.script.run.withSuccessHandler(res).withFailureHandler(rej)[fn](payload));
   }
@@ -527,6 +540,15 @@ function renderPecas() {
     el.className = 'peca' + (q ? ' sel' : '');
     el.innerHTML = '<div class="nome"></div><div class="step"><button type="button">−</button><span>' + q + '</span><button type="button">+</button></div>';
     el.querySelector('.nome').textContent = p.peca;
+    // Saldo atual no Bling (só informativo: não impede lançar a peça)
+    const saldo = p.bling ? (cat.saldoPecas || {})[p.bling] : undefined;
+    if (saldo !== undefined) {
+      const s = document.createElement('div');
+      s.className = 'muted';
+      s.style.cssText = 'font-size:12px;' + (saldo <= 0 ? 'color:var(--err);font-weight:700' : '');
+      s.textContent = 'estoque: ' + saldo;
+      el.querySelector('.nome').appendChild(s);
+    }
     const [menos, mais] = el.querySelectorAll('button');
     menos.onclick = () => mudarQtd(p.peca, -1);
     mais.onclick = () => mudarQtd(p.peca, 1);
@@ -632,6 +654,49 @@ function renderVerificar() {
   });
 }
 
+// ---------- Peça esquecida (ajuste de manutenção do mês) ----------
+function renderAjuste() {
+  const card = $('cardAjuste');
+  if (!card || !st.operador) return;
+  const minhas = (cat.minhasManut || []).filter(x => x.operador === st.operador).slice().reverse();
+  card.classList.toggle('hidden', !minhas.length);
+  const sel = $('ajNumero'), cur = sel.value;
+  sel.innerHTML = '<option value="">Máquina...</option>';
+  minhas.forEach(x => {
+    const o = document.createElement('option');
+    o.value = x.numero; o.dataset.modelo = x.modelo;
+    o.textContent = x.numero + ' · ' + x.codigo + ' · ' + x.modelo;
+    sel.appendChild(o);
+  });
+  if (cur) sel.value = cur;
+  renderAjPecas();
+}
+function renderAjPecas() {
+  const opt = $('ajNumero').selectedOptions[0], modelo = opt ? opt.dataset.modelo : '';
+  const sel = $('ajPeca');
+  sel.innerHTML = '<option value="">Peça...</option>';
+  (cat.modelos[modelo] || []).filter(p => p.peca !== 'Limpeza').forEach(p => {
+    const o = document.createElement('option'); o.value = o.textContent = p.peca; sel.appendChild(o);
+  });
+}
+$('ajNumero').onchange = renderAjPecas;
+$('btnAjSalvar').onclick = () => {
+  const opt = $('ajNumero').selectedOptions[0], peca = $('ajPeca').value, qtd = parseInt($('ajQtd').value, 10);
+  if (!opt || !opt.value) return toast('Escolha a máquina.', true);
+  if (!peca) return toast('Escolha a peça.', true);
+  if (!(qtd > 0)) return toast('Informe a quantidade.', true);
+  const info = (cat.modelos[opt.dataset.modelo] || []).find(p => p.peca === peca) || {};
+  st.ajustes.push({ id: novoId(), operador: st.operador, numero: opt.value, peca, qtd, custo: info.custo || 0, bling: info.bling || '' });
+  salvar();
+  $('ajQtd').value = ''; $('ajPeca').value = '';
+  toast('Peça adicionada. Enviando...');
+  enviarAjustes();
+};
+function enviarAjustes() {
+  const pend = (st.ajustes || []).filter(a => !a.enviado);
+  pend.reduce((prev, a) => prev.then(() => api('ajuste', a).then(() => { a.enviado = true; salvar(); }).catch(() => {})), Promise.resolve());
+}
+
 function pedirFinalizar() {
   const r = resumoDe(atual);
   $('fmCodigo').textContent = atual.codigo + ' · ' + atual.modelo;
@@ -700,6 +765,7 @@ function iniciarTarefa() {
 function pararTarefa() {
   const t = tarefaAtiva();
   if (!t) return;
+  encerrarPausa(t);
   t.fim = Date.now();
   toast(t.tipo + ': ' + fmtTempo(t.fim - t.inicio));
   salvar(); enviar(true);
@@ -843,8 +909,19 @@ function renderPecasUsadas() {
   const selM = $('pcModelo'), selP = $('pcPeca');
   const modelos = Object.keys(cat.modelos).sort((a, b) => a.localeCompare(b));
   if (selM.options.length !== modelos.length + 1) preencherSelect(selM, modelos, 'Modelo...');
-  const pecas = (cat.modelos[selM.value] || []).filter(p => p.peca !== 'Limpeza').map(p => p.peca);
-  if (selP.dataset.modelo !== selM.value) { preencherSelect(selP, pecas, selM.value ? 'Peça...' : 'Escolha o modelo primeiro'); selP.dataset.modelo = selM.value; }
+  const pecas = (cat.modelos[selM.value] || []).filter(p => p.peca !== 'Limpeza');
+  if (selP.dataset.modelo !== selM.value) {
+    selP.innerHTML = '<option value="">' + (selM.value ? 'Peça...' : 'Escolha o modelo primeiro') + '</option>';
+    pecas.forEach(p => {
+      // Saldo do Bling aparece no texto da opção; o valor continua sendo só o nome da peça
+      const saldo = p.bling ? (cat.saldoPecas || {})[p.bling] : undefined;
+      const o = document.createElement('option');
+      o.value = p.peca;
+      o.textContent = p.peca + (saldo !== undefined ? '  (estoque: ' + saldo + ')' : '');
+      selP.appendChild(o);
+    });
+    selP.dataset.modelo = selM.value;
+  }
   const hoje = st.pecas.filter(p => p.operador === st.operador && hojeStr(p.data) === hojeStr()).slice().reverse();
   $('listaPecasUsadas').innerHTML = '';
   hoje.forEach(p => {
@@ -938,6 +1015,7 @@ function pendentes() {
   };
 }
 function enviar(silencioso) {
+  enviarAjustes();
   const p = pendentes();
   const total = p.manutencoes.length + p.tarefas.length + p.observacoes.length + p.entradas.length + p.liberacoes.length + p.erros.length + p.pecas.length;
   if (!total) { if (!silencioso) toast('Nada pendente para enviar.'); return; }
@@ -947,7 +1025,7 @@ function enviar(silencioso) {
   const payload = {
     manutencoes: pend.map(m => ({ id: m.id, operador: m.operador, codigo: m.codigo, modelo: m.modelo,
       inicio: m.inicio, fim: m.fim, pausaMs: m.pausaMs || 0, pressao: m.pressao, checklist: textoCheck(m), pecas: pecasDe(m).map(x => ({ peca: x.peca, qtd: x.qtd, custo: x.custo, bling: x.bling })) })),
-    tarefas: p.tarefas.map(t => ({ id: t.id, operador: t.operador, tipo: t.tipo, inicio: t.inicio, fim: t.fim })),
+    tarefas: p.tarefas.map(t => ({ id: t.id, operador: t.operador, tipo: t.tipo, inicio: t.inicio, fim: t.fim, pausaMs: t.pausaMs || 0 })),
     observacoes: p.observacoes.map(o => ({ id: o.id, operador: o.operador, data: o.data, texto: o.texto })),
     entradas: p.entradas.map(e => ({ id: e.id, data: e.data, modelo: e.modelo, qtd: e.qtd, responsavel: e.responsavel })),
     liberacoes: p.liberacoes.map(l => ({ id: l.id, operador: l.operador, modelo: l.modelo, qtd: l.qtd, inicio: l.inicio, fim: l.fim, pausaMs: l.pausaMs || 0 })),
@@ -1107,7 +1185,7 @@ function renderTarefas() {
   const ativa = tarefaAtiva();
   $('tfAtiva').classList.toggle('hidden', !ativa);
   $('tfNova').classList.toggle('hidden', !!ativa);
-  if (ativa) { $('tfNome').textContent = ativa.tipo; $('tfTimer').dataset.ini = ativa.inicio; }
+  if (ativa) { $('tfNome').textContent = ativa.tipo; $('tfTimer').textContent = fmtTempo(decorrido(ativa)); mostrarPausa(ativa, 'tfPausado', 'btnTfPausa', 'tfTimer'); }
 
   const lista = st.tarefas.filter(t => t.fim && t.operador === st.operador && hojeStr(t.inicio) === hojeStr()).slice().reverse();
   $('listaTarefas').innerHTML = '';
@@ -1149,6 +1227,7 @@ function render() {
   $('stPend').textContent = pend;
   if (!enviando) $('btnEnviar').textContent = pend ? 'Enviar para a planilha (' + pend + ' pendente' + (pend > 1 ? 's' : '') + ')' : 'Tudo enviado ✓';
   renderTarefas();
+  renderAjuste();
   renderEntradas();
 
   $('cardAndamento').classList.toggle('hidden', verif || !st.andamento.length);
@@ -1189,6 +1268,8 @@ function tick() {
     if (m) el.textContent = fmtTempo(decorrido(m));
   });
   if (atual) $('tbTimer').textContent = fmtTempo(decorrido(atual));
+  const tAtiva = tarefaAtiva();
+  if (tAtiva) $('tfTimer').textContent = fmtTempo(decorrido(tAtiva));
   const lib = liberacaoAtiva();
   if (lib) $('lbTimer').textContent = fmtTempo(decorrido(lib));
 }
@@ -1244,6 +1325,7 @@ $('fmConfirmar').onclick = confirmarFim;
 $('btnEnviar').onclick = () => enviar(false);
 $('btnTfIniciar').onclick = iniciarTarefa;
 $('btnTfParar').onclick = pararTarefa;
+$('btnTfPausa').onclick = () => { alternarPausa(tarefaAtiva()); renderTarefas(); };
 $('btnObs').onclick = salvarObs;
 $('btnEntrada').onclick = registrarEntrada;
 $('btnPeca').onclick = registrarPeca;
