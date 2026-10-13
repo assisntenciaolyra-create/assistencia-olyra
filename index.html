@@ -175,6 +175,14 @@
         <button type="button" id="btnCam" title="Ler com a câmera">📷</button>
       </form>
       <p class="muted" style="margin:8px 0 0">Bipe uma vez para iniciar, bipe de novo para finalizar.</p>
+      <button type="button" id="btnDescarte" style="margin-top:12px;background:#fdecea;color:var(--err)">🗑 Descartar máquina (sem conserto)</button>
+      <div id="cardDescarte" class="hidden" style="margin-top:12px;border-top:1px solid var(--line);padding-top:12px">
+        <div class="muted">Máquina que não tem conserto. Sai do estoque, sem pontos.</div>
+        <input id="dsCodigo" class="full" placeholder="Código, ex.: M0913" style="margin-top:8px;text-transform:uppercase">
+        <select id="dsModelo" class="full" style="margin-top:8px"></select>
+        <input id="dsMotivo" class="full" placeholder="Motivo (ex.: placa queimada, sem peça)" style="margin-top:8px">
+        <button type="button" class="big" id="btnDsConfirmar" style="margin-top:10px;background:var(--err);color:#fff">Confirmar descarte</button>
+      </div>
     </div>
 
     <div class="card hidden" id="cardMeta">
@@ -194,6 +202,12 @@
     <div class="card" id="cardAndamento">
       <h2>Em andamento</h2>
       <div id="listaAndamento"></div>
+    </div>
+
+    <div class="card hidden" id="cardPlano">
+      <h2>🎯 Sugestão de hoje</h2>
+      <p class="muted" style="margin:0 0 8px">Indicação para o dia (pode mudar se a prioridade mudar).</p>
+      <div id="planoLista"></div>
     </div>
 
     <div class="card hidden" id="cardAjuste">
@@ -429,7 +443,7 @@ const novoId = () => Date.now().toString(36) + Math.random().toString(36).slice(
 
 // ---------- comunicação com o Apps Script ----------
 function api(action, payload) {
-  const fn = { catalogo: 'getDados', enviar: 'enviarDia', entrar: 'entrar', ajuste: 'registrarAjuste' }[action];
+  const fn = { catalogo: 'getDados', enviar: 'enviarDia', entrar: 'entrar', ajuste: 'registrarAjuste', descarte: 'registrarDescarte' }[action];
   if (window.google && google.script && google.script.run) {
     return new Promise((res, rej) => google.script.run.withSuccessHandler(res).withFailureHandler(rej)[fn](payload));
   }
@@ -653,6 +667,54 @@ function renderVerificar() {
     if (li.dataset.aero && MODELOS_AEROSOL.indexOf($('lbModelo').textContent.trim()) >= 0) li.className = 'na';
   });
 }
+
+// ---------- Sugestão do dia (indicação do plano, com o que já foi feito) ----------
+function renderPlano() {
+  const card = $('cardPlano');
+  if (!card || !st.operador) return;
+  const plano = cat.planoDia && cat.planoDia.porOperador ? cat.planoDia.porOperador[st.operador] : null;
+  card.classList.toggle('hidden', !plano || !plano.length);
+  const box = $('planoLista');
+  box.innerHTML = '';
+  (plano || []).forEach(l => {
+    const d = document.createElement('div'); d.className = 'row';
+    d.innerHTML = '<div><b></b><div class="muted"></div></div><span class="tag"></span>';
+    d.querySelector('b').textContent = l.modelo;
+    d.querySelector('.muted').textContent = 'sugestão: ' + l.previsto + ' máq.';
+    const tag = d.querySelector('.tag');
+    tag.textContent = 'feitas: ' + (l.feitas || 0);
+    tag.classList.add(l.feitas >= l.previsto ? 'ok' : 'gold');
+    box.appendChild(d);
+  });
+}
+
+// ---------- Descarte de máquina (sem conserto: sai do estoque, sem pontos) ----------
+$('btnDescarte').onclick = () => {
+  const c = $('cardDescarte'), abrir = c.classList.contains('hidden');
+  c.classList.toggle('hidden', !abrir);
+  if (abrir) {
+    $('dsCodigo').value = ($('inScan').value || '').trim().toUpperCase();
+    const sel = $('dsModelo');
+    sel.innerHTML = '<option value="">Modelo...</option>';
+    (cat.modelosLiberacao || []).forEach(m => { const o = document.createElement('option'); o.value = o.textContent = m; sel.appendChild(o); });
+  }
+};
+$('btnDsConfirmar').onclick = async () => {
+  const codigo = $('dsCodigo').value.trim().toUpperCase(), modelo = $('dsModelo').value, motivo = $('dsMotivo').value.trim();
+  if (!codigo) return toast('Informe o código da máquina.', true);
+  if (!modelo) return toast('Escolha o modelo.', true);
+  if (!motivo) return toast('Informe o motivo.', true);
+  confirmar('Descartar ' + codigo + ' (' + modelo + ')? Ela sai do estoque e não gera pontos.', async () => {
+    try {
+      await api('descarte', { id: novoId(), operador: st.operador, codigo, modelo, motivo, data: Date.now() });
+      toast('Máquina ' + codigo + ' descartada.');
+      $('dsCodigo').value = ''; $('dsMotivo').value = ''; $('cardDescarte').classList.add('hidden');
+      atualizarCatalogo();
+    } catch (e) {
+      toast('Não foi possível registrar o descarte. Tente de novo com internet.', true);
+    }
+  });
+};
 
 // ---------- Peça esquecida (ajuste de manutenção do mês) ----------
 function renderAjuste() {
@@ -1228,6 +1290,7 @@ function render() {
   if (!enviando) $('btnEnviar').textContent = pend ? 'Enviar para a planilha (' + pend + ' pendente' + (pend > 1 ? 's' : '') + ')' : 'Tudo enviado ✓';
   renderTarefas();
   renderAjuste();
+  renderPlano();
   renderEntradas();
 
   $('cardAndamento').classList.toggle('hidden', verif || !st.andamento.length);
