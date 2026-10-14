@@ -181,6 +181,7 @@
         <input id="dsCodigo" class="full" placeholder="Código, ex.: M0913" style="margin-top:8px;text-transform:uppercase">
         <select id="dsModelo" class="full" style="margin-top:8px"></select>
         <input id="dsMotivo" class="full" placeholder="Motivo (ex.: placa queimada, sem peça)" style="margin-top:8px">
+        <input id="dsSenha" class="full" type="password" inputmode="numeric" placeholder="Senha do descarte" style="margin-top:8px">
         <button type="button" class="big" id="btnDsConfirmar" style="margin-top:10px;background:var(--err);color:#fff">Confirmar descarte</button>
       </div>
     </div>
@@ -704,11 +705,13 @@ $('btnDsConfirmar').onclick = async () => {
   if (!codigo) return toast('Informe o código da máquina.', true);
   if (!modelo) return toast('Escolha o modelo.', true);
   if (!motivo) return toast('Informe o motivo.', true);
+  const senha = $('dsSenha').value;
+  if (!senha) return toast('Digite a senha do descarte.', true);
   confirmar('Descartar ' + codigo + ' (' + modelo + ')? Ela sai do estoque e não gera pontos.', async () => {
     try {
-      await api('descarte', { id: novoId(), operador: st.operador, codigo, modelo, motivo, data: Date.now() });
+      await api('descarte', { id: novoId(), operador: st.operador, codigo, modelo, motivo, senha, data: Date.now() });
       toast('Máquina ' + codigo + ' descartada.');
-      $('dsCodigo').value = ''; $('dsMotivo').value = ''; $('cardDescarte').classList.add('hidden');
+      $('dsCodigo').value = ''; $('dsMotivo').value = ''; $('dsSenha').value = ''; $('cardDescarte').classList.add('hidden');
       atualizarCatalogo();
     } catch (e) {
       toast('Não foi possível registrar o descarte. Tente de novo com internet.', true);
