@@ -222,6 +222,14 @@
       <button class="big" id="btnAjSalvar" style="margin-top:10px">Adicionar peça</button>
     </div>
 
+    <div class="card hidden" id="cardEditar">
+      <h2>✏️ Editar máquina</h2>
+      <p class="muted" style="margin:0 0 8px">Corrige as peças de uma máquina que você já finalizou neste mês. Início, término e pausas continuam os mesmos.</p>
+      <select id="edNumero" class="full" style="margin-bottom:8px"></select>
+      <div id="edPecas"></div>
+      <button class="big" id="btnEdSalvar" style="margin-top:10px">Salvar correção</button>
+    </div>
+
     <div class="card" id="cardConcluidas">
       <h2>Concluídas hoje</h2>
       <div id="listaConcluidas"></div>
@@ -420,6 +428,8 @@ let atual = null;       // manutenção aberta na tela de trabalho
 let novoCodigo = null;  // código bipado aguardando "Iniciar"
 let leitorCam = null;
 
+const API_URL = 'https://script.google.com/macros/s/AKfycby72i9Vv23yF-5jksq2RKONbwEGZsxiRlFH9byF2mca6wlfT_JdYYptsh3X_qtSHWzY/exec';
+const CHAVE_APP = 'zl0fyk1nsiormg3w4tc9p25q';
 const $ = id => document.getElementById(id);
 const brl = v => v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const hojeStr = (d = new Date()) => new Date(d).toLocaleDateString('pt-BR');
@@ -444,7 +454,7 @@ const novoId = () => Date.now().toString(36) + Math.random().toString(36).slice(
 
 // ---------- comunicação com o Apps Script ----------
 function api(action, payload) {
-  const fn = { catalogo: 'getDados', enviar: 'enviarDia', entrar: 'entrar', ajuste: 'registrarAjuste', descarte: 'registrarDescarte' }[action];
+  const fn = { catalogo: 'getDados', enviar: 'enviarDia', entrar: 'entrar', ajuste: 'registrarAjuste', descarte: 'registrarDescarte', editar: 'editarManutencao' }[action];
   if (window.google && google.script && google.script.run) {
     return new Promise((res, rej) => google.script.run.withSuccessHandler(res).withFailureHandler(rej)[fn](payload));
   }
@@ -757,6 +767,68 @@ $('btnAjSalvar').onclick = () => {
   toast('Peça adicionada. Enviando...');
   enviarAjustes();
 };
+// ---------- Editar máquina (só peças) ----------
+let edPecas = {}; // peça -> quantidade, da máquina escolhida
+function renderEditar() {
+  const card = $('cardEditar');
+  if (!card || !st.operador) return;
+  const minhas = (cat.editaveis || []).filter(x => x.operador === st.operador).slice().reverse();
+  card.classList.toggle('hidden', !minhas.length);
+  const sel = $('edNumero'), cur = sel.value;
+  sel.innerHTML = '<option value="">Máquina...</option>';
+  minhas.forEach(x => {
+    const o = document.createElement('option');
+    o.value = x.numero; o.dataset.modelo = x.modelo;
+    o.textContent = x.numero + ' · ' + x.codigo + ' · ' + x.modelo;
+    sel.appendChild(o);
+  });
+  if (cur) sel.value = cur;
+  carregarEdicao();
+}
+function carregarEdicao() {
+  const numero = $('edNumero').value;
+  const m = (cat.editaveis || []).find(x => x.numero === numero);
+  edPecas = {};
+  if (m) m.pecas.forEach(p => { if (p.peca !== 'Limpeza') edPecas[p.peca] = p.qtd; });
+  desenharEdicao();
+}
+function desenharEdicao() {
+  const box = $('edPecas');
+  box.innerHTML = '';
+  const opt = $('edNumero').selectedOptions[0];
+  if (!opt || !opt.value) return;
+  (cat.modelos[opt.dataset.modelo] || []).filter(p => p.peca !== 'Limpeza').forEach(p => {
+    const q = edPecas[p.peca] || 0;
+    const el = document.createElement('div');
+    el.className = 'peca' + (q ? ' sel' : '');
+    el.innerHTML = '<div class="nome"></div><div class="step"><button type="button">−</button><span>' + q + '</span><button type="button">+</button></div>';
+    el.querySelector('.nome').textContent = p.peca;
+    const [menos, mais] = el.querySelectorAll('button');
+    menos.onclick = () => { if (q > 1) edPecas[p.peca] = q - 1; else delete edPecas[p.peca]; desenharEdicao(); };
+    mais.onclick = () => { edPecas[p.peca] = q + 1; desenharEdicao(); };
+    box.appendChild(el);
+  });
+}
+$('edNumero').onchange = carregarEdicao;
+$('btnEdSalvar').onclick = () => {
+  const numero = $('edNumero').value;
+  const m = (cat.editaveis || []).find(x => x.numero === numero);
+  if (!m) return toast('Escolha a máquina.', true);
+  const lista = cat.modelos[m.modelo] || [];
+  const pecas = Object.keys(edPecas).filter(n => edPecas[n] > 0).map(n => {
+    const info = lista.find(p => p.peca === n) || {};
+    return { peca: n, qtd: edPecas[n], custo: info.custo || 0, bling: info.bling || '' };
+  });
+  const limpeza = m.pecas.find(p => p.peca === 'Limpeza');
+  if (limpeza) pecas.unshift({ peca: 'Limpeza', qtd: limpeza.qtd, custo: 0, bling: '' });
+  if (!pecas.length) return toast('A máquina precisa ter pelo menos uma peça.', true);
+  toast('Salvando correção...');
+  api('editar', { id: m.id, operador: st.operador, pecas }).then(r => {
+    toast('Máquina ' + r.numero + ' corrigida: ' + String(r.pontos).replace('.', ',') + ' pts');
+    atualizarCatalogo();
+  }).catch(e => toast(e.message || 'Erro ao corrigir.', true));
+};
+
 function enviarAjustes() {
   const pend = (st.ajustes || []).filter(a => !a.enviado);
   pend.reduce((prev, a) => prev.then(() => api('ajuste', a).then(() => { a.enviado = true; salvar(); }).catch(() => {})), Promise.resolve());
@@ -1293,6 +1365,7 @@ function render() {
   if (!enviando) $('btnEnviar').textContent = pend ? 'Enviar para a planilha (' + pend + ' pendente' + (pend > 1 ? 's' : '') + ')' : 'Tudo enviado ✓';
   renderTarefas();
   renderAjuste();
+  renderEditar();
   renderPlano();
   renderEntradas();
 
