@@ -226,6 +226,8 @@
       <h2>✏️ Editar máquina</h2>
       <p class="muted" style="margin:0 0 8px">Corrige as peças de uma máquina que você já finalizou neste mês. Início, término e pausas continuam os mesmos.</p>
       <select id="edNumero" class="full" style="margin-bottom:8px"></select>
+      <label class="muted" for="edModelo" style="display:block;margin:0 0 4px">Modelo da máquina</label>
+      <select id="edModelo" class="full" style="margin-bottom:8px"></select>
       <div id="edPecas"></div>
       <button class="big" id="btnEdSalvar" style="margin-top:10px">Salvar correção</button>
     </div>
@@ -767,6 +769,7 @@ $('btnAjSalvar').onclick = () => {
 };
 // ---------- Editar máquina (só peças) ----------
 let edPecas = {}; // peça -> quantidade, da máquina escolhida
+let edCarregado = ''; // número da máquina cujos dados estão na tela
 function renderEditar() {
   const card = $('cardEditar');
   if (!card || !st.operador) return;
@@ -781,21 +784,29 @@ function renderEditar() {
     sel.appendChild(o);
   });
   if (cur) sel.value = cur;
-  carregarEdicao();
+  if (sel.value !== edCarregado) carregarEdicao();
 }
 function carregarEdicao() {
   const numero = $('edNumero').value;
   const m = (cat.editaveis || []).find(x => x.numero === numero);
   edPecas = {};
-  if (m) m.pecas.forEach(p => { if (p.peca !== 'Limpeza') edPecas[p.peca] = p.qtd; });
+  edCarregado = numero;
+  const selM = $('edModelo');
+  selM.innerHTML = '';
+  if (m) {
+    const nomes = Object.keys(cat.modelos || {});
+    if (nomes.indexOf(m.modelo) < 0) nomes.unshift(m.modelo);
+    nomes.forEach(n => { const o = document.createElement('option'); o.value = n; o.textContent = n; selM.appendChild(o); });
+    selM.value = m.modelo;
+    m.pecas.forEach(p => { if (p.peca !== 'Limpeza') edPecas[p.peca] = p.qtd; });
+  }
   desenharEdicao();
 }
 function desenharEdicao() {
   const box = $('edPecas');
   box.innerHTML = '';
-  const opt = $('edNumero').selectedOptions[0];
-  if (!opt || !opt.value) return;
-  (cat.modelos[opt.dataset.modelo] || []).filter(p => p.peca !== 'Limpeza').forEach(p => {
+  if (!$('edNumero').value) return;
+  (cat.modelos[$('edModelo').value] || []).filter(p => p.peca !== 'Limpeza').forEach(p => {
     const q = edPecas[p.peca] || 0;
     const el = document.createElement('div');
     el.className = 'peca' + (q ? ' sel' : '');
@@ -808,11 +819,20 @@ function desenharEdicao() {
   });
 }
 $('edNumero').onchange = carregarEdicao;
+$('edModelo').onchange = () => {
+  // Ao trocar o modelo, só ficam as peças que também existem no modelo novo
+  const lista = (cat.modelos[$('edModelo').value] || []).map(p => p.peca);
+  const tiradas = Object.keys(edPecas).filter(n => lista.indexOf(n) < 0);
+  tiradas.forEach(n => delete edPecas[n]);
+  if (tiradas.length) toast('Peças que não existem neste modelo foram retiradas: ' + tiradas.join(', ') + '. Confira e marque as peças certas.', true);
+  desenharEdicao();
+};
 $('btnEdSalvar').onclick = () => {
   const numero = $('edNumero').value;
   const m = (cat.editaveis || []).find(x => x.numero === numero);
   if (!m) return toast('Escolha a máquina.', true);
-  const lista = cat.modelos[m.modelo] || [];
+  const modelo = $('edModelo').value || m.modelo;
+  const lista = cat.modelos[modelo] || [];
   const pecas = Object.keys(edPecas).filter(n => edPecas[n] > 0).map(n => {
     const info = lista.find(p => p.peca === n) || {};
     return { peca: n, qtd: edPecas[n], custo: info.custo || 0, bling: info.bling || '' };
@@ -821,7 +841,8 @@ $('btnEdSalvar').onclick = () => {
   if (limpeza) pecas.unshift({ peca: 'Limpeza', qtd: limpeza.qtd, custo: 0, bling: '' });
   if (!pecas.length) return toast('A máquina precisa ter pelo menos uma peça.', true);
   toast('Salvando correção...');
-  api('editar', { id: m.id, operador: st.operador, pecas }).then(r => {
+  api('editar', { id: m.id, operador: st.operador, modelo, pecas }).then(r => {
+    edCarregado = '';
     toast('Máquina ' + r.numero + ' corrigida: ' + String(r.pontos).replace('.', ',') + ' pts');
     atualizarCatalogo();
   }).catch(e => toast(e.message || 'Erro ao corrigir.', true));
